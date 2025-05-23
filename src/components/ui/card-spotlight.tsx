@@ -70,7 +70,7 @@ export const CardSpotlight = ({
           />
         )}
       </motion.div>
-      {children}
+      <div className="relative z-10">{children}</div>
     </div>
   );
 };
