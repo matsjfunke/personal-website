@@ -5,6 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import matter from "gray-matter";
+import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
 interface Props {
   params: {
@@ -12,7 +13,7 @@ interface Props {
   };
 }
 
-async function getCompendium(slug: string) {
+async function getCompendium(slug: string): Promise<CompendiumDetail | null> {
   try {
     const compendiumsPath = join(process.cwd(), "content/compendiums");
     const filePath = join(compendiumsPath, `${slug}.mdx`);
@@ -22,7 +23,7 @@ async function getCompendium(slug: string) {
 
     return {
       content,
-      frontmatter,
+      frontmatter: frontmatter as unknown as CompendiumMeta,
       title:
         frontmatter.title ||
         slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
