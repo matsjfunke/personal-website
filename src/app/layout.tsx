@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
+import "katex/dist/katex.min.css";
+
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 

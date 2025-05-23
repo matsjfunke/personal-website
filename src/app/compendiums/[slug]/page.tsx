@@ -6,6 +6,9 @@ import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
 import { ArrowLeft } from "lucide-react";
 import { join } from "path";
+import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
@@ -102,8 +105,8 @@ export default async function CompendiumPage({ params }: Props) {
               source={compendium.content}
               options={{
                 mdxOptions: {
-                  remarkPlugins: [],
-                  rehypePlugins: [],
+                  remarkPlugins: [remarkMath, remarkGfm],
+                  rehypePlugins: [rehypeKatex],
                 },
               }}
               components={{
@@ -165,6 +168,31 @@ export default async function CompendiumPage({ params }: Props) {
                 blockquote: (props) => (
                   <blockquote
                     className="border-l-4 border-white/30 pl-4 italic text-white/80 my-6"
+                    {...props}
+                  />
+                ),
+                table: (props) => (
+                  <div className="overflow-x-auto my-6">
+                    <table
+                      className="min-w-full border border-white/20 rounded-lg"
+                      {...props}
+                    />
+                  </div>
+                ),
+                thead: (props) => <thead className="bg-white/5" {...props} />,
+                tbody: (props) => <tbody {...props} />,
+                tr: (props) => (
+                  <tr className="border-b border-white/10" {...props} />
+                ),
+                th: (props) => (
+                  <th
+                    className="px-4 py-3 text-left text-white font-semibold border-r border-white/10 last:border-r-0"
+                    {...props}
+                  />
+                ),
+                td: (props) => (
+                  <td
+                    className="px-4 py-3 text-white/90 border-r border-white/10 last:border-r-0 text-sm"
                     {...props}
                   />
                 ),
