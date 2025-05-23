@@ -1,7 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 body {
-  @apply bg-black;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* SVG icon styling for theme-aware colors */
+.svg-icon {
+  filter: brightness(0) invert(1); /* White in dark mode */
+  transition: filter 0.3s ease;
+}
+
+[data-theme="light"] .svg-icon {
+  filter: brightness(0) invert(0); /* Black in light mode */
 }
