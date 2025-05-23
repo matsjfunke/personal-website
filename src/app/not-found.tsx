@@ -31,7 +31,7 @@ export default function NotFound() {
       </p>
       <div className="mb-6">
         <Image
-          src="/404-meme.jpg"
+          src="/not-found/404-meme.jpg"
           alt="404 meme - I wasn't looking for page 404"
           width={300}
           height={300}

@@ -15,7 +15,7 @@ export default function Footer() {
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
           >
             <Image
-              src="/github.svg"
+              src="/footer/github.svg"
               alt="GitHub"
               width={20}
               height={20}
@@ -28,13 +28,26 @@ export default function Footer() {
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
           >
             <Image
-              src="/linkedin.svg"
+              src="/footer/linkedin.svg"
               alt="LinkedIn"
               width={20}
               height={20}
               className="filter invert"
             />
             LinkedIn
+          </Link>
+          <Link
+            href="https://x.com/matsjfunke13"
+            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+          >
+            <Image
+              src="/footer/x.svg"
+              alt="X (Twitter)"
+              width={20}
+              height={20}
+              className="filter invert"
+            />
+            Twitter
           </Link>
           <Link
             href="mailto:mats.funke@gmail.com"
