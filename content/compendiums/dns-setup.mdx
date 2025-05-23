@@ -1,0 +1,78 @@
+---
+title: "Setting up DNS for Your Domain"
+description: "A comprehensive guide to configuring DNS for your website"
+author: "matsjfunke"
+date: "2024-03-15"
+---
+
+## Understanding DNS
+
+DNS (Domain Name System) is the internet's phone book. 
+- It translates human-readable domain names into IP addresses that computers use to identify each other on the network.
+
+## DNS Record Types Explained
+
+- **A Record:** Maps a domain to an IPv4 address, telling browsers where to find your website.
+
+- **AAAA Record:** Similar to an A record, but maps a domain to an IPv6 address for next-generation Internet Protocol.
+
+- **CNAME Record:** Creates an alias by pointing one domain or subdomain to another domain name.
+
+- **MX Record:** Specifies the mail servers responsible for handling email for your domain.
+
+- **NS Record:** Identifies the authoritative name servers for your domain.
+
+- **SOA Record:** Contains administrative information about your DNS zone, including serial number and refresh intervals.
+
+- **TXT Record:** Holds text information for various purposes, often used for domain verification or SPF records.
+
+- **PTR Record:** Used for reverse DNS lookups, mapping an IP address to a domain name.
+
+- **SRV Record:** Specifies the location of specific services, like VoIP or instant messaging.
+
+- **CAA Record:** Specifies which Certificate Authorities are allowed to issue SSL/TLS certificates for your domain.
+
+
+## Configuring DNS Records
+
+### Step 1: Access Your Domain Registrar's DNS Management
+
+Log in to your domain registrar's website and navigate to the DNS management section.
+
+### Step 2: Add an A Record
+
+### DNS Records
+
+1. **Root Domain (A Record)**
+   - Type: A
+   - Host: @
+   - Value: Your.Server.IP.Address
+   - TTL: 3600
+
+2. **WWW Subdomain (A Record)**
+   - Type: A
+   - Host: www
+   - Value: Your.Server.IP.Address
+   - TTL: 3600
+
+3. **API Subdomain (A Record)**
+   - Type: A
+   - Host: api
+   - Value: Your.Server.IP.Address:BackendPort
+   - TTL: 3600
+
+**Notes:**
+- Replace `Your.Server.IP.Address` with your actual server IP address.
+- The `BackendPort` in the API record should be replaced with the actual port your API is running on (e.g., 3000, 8080, etc.).
+- TTL (Time To Live) is set to 3600 seconds (1 hour) in this example. You may adjust this based on your needs.
+- Access domain in browser
+
+## Verifying DNS Configuration
+
+### Use dig Command
+```sh
+dig yourdomain.com
+```
+- Use online tools like Domain Digger or DNSChecker to verify your DNS configuration from multiple locations.
+
+**Note**: DNS changes can take up to 48 hours to propagate globally, although they often take effect much sooner.

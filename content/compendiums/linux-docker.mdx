@@ -1,0 +1,89 @@
+---
+title: "Docker & Docker Compose on VPS"
+description: "Tutorial to install Docker & Docker Compose on a Linux VPS"
+author: "matsjfunke"
+date: "2024-03-10"
+---
+
+## Option 1: Using apt-get
+
+- Pros: Simple and quick installation with stable, well-tested versions.
+- Cons: May not include the latest features and updates.
+
+#### Step 1: Update and Upgrade Your System
+
+```sh
+sudo apt update
+sudo apt upgrade -y
+sudo reboot
+```
+
+#### Step 2: Install Docker and Docker Compose
+
+```sh
+sudo apt-get install -y docker.io docker-compose
+```
+
+**Note**: With the 'apt-get method', you might not get the latest features and fixes. Always check the versions installed and update if necessary.
+
+## Option 2: Using the Docker Repository
+
+- Pros: Provides access to the latest Docker features and updates with more version control.
+- Cons: Involves more complex steps and may introduce newer, less tested features.
+
+#### Step 1: Update and Upgrade Your System
+
+```sh
+sudo apt update
+sudo apt upgrade -y
+sudo reboot
+```
+
+#### Step 2: Install packages to allow apt to use repositories over HTTPS:
+
+```sh
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+```
+
+#### Step 3: Add Docker’s Official GPG Key
+
+```sh
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+```
+
+#### Step 4: Add the Docker repository to apt sources and update them:
+
+```sh
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+```
+
+#### Step 5: Install Docker
+
+```sh
+sudo apt install docker-ce -y
+
+# verify that Docker is installed and running correctly by running a test image:
+sudo docker run hello-world
+```
+
+#### Step 6: Install Docker Compose
+
+```sh
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# verify with
+docker-compose --version
+```
+
+#### Step 7: Manage Docker as a Non-root User
+
+To avoid using sudo with Docker commands, create a Docker group and add your user:
+
+```sh
+sudo usermod -aG docker ${USER}
+```
+
+Log out and back in so that your group membership is re-evaluated.
+

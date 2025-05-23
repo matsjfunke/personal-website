@@ -1,0 +1,112 @@
+---
+title: "The Rsync Guide"
+description: "Everything you should know about Rsync"
+author: "matsjfunke"
+date: "2024-12-21"
+---
+
+### Introduction
+
+This guide covers `rsync`, a fast and versatile command-line utility for synchronizing files / directories between two locations over a network.
+You'll learn the basics of rsync, understand it's process, and practical usage scenarios such as data synchronization (transfer & deletion), excluding data during operations, bandwidth limiting and looging setup.
+
+### Rsync Basics
+
+- **Source:** The location of the files or directories you want to copy (e.g. local path or a remote server).
+- **Destination:** The location where you want to copy the files or directories to (e.g. local path or a remote server).
+- **Options:** `rsync` provides various options to customize the synchronization process, such as preserving file permissions, compressing data, and excluding files.
+
+### Rsync Process
+
+1. **Initiate Connection:**
+
+   - `rsync` can operate over SSH to securely transfer data. The connection is established using SSH credentials if specified.
+
+2. **File Comparison:**
+
+   - `rsync` compares files between the source and destination, determining which files need to be transferred based on differences in size, modification time, or checksum.
+
+3. **Data Transfer:**
+
+   - Only the differences between files are transferred, minimizing bandwidth usage. This is achieved through a process called delta encoding.
+
+### Rsync Usage
+
+#### 1. Basic file synchronization
+
+```sh
+rsync -avz /path/to/source/ /path/to/destination/
+```
+
+- `-a`: Archive mode, preserves permissions, timestamps, and other attributes.
+- `-v`: Verbose output, shows the progress of the transfer.
+- `-z`: Compresses data during transfer for efficiency.
+
+#### 2. Synchronize with a remote server
+
+```sh
+rsync -avz -e ssh /path/to/source/ user@remote:/path/to/destination/
+```
+
+- `-e ssh`: Specifies SSH as the remote shell for secure data transfer.
+
+#### 3. Exclude specific files or directories
+
+**Option 1:**
+
+```sh
+rsync -avz --exclude='*.tmp' /path/to/source/ /path/to/destination/
+```
+
+- `--exclude='*.tmp'`: Excludes all files with the `.tmp` extension from the transfer.
+
+**Option 1:**
+exclude specific files or directories using a list with `.rsyncignore` which works similar to `.gitignore`.
+
+First, create a file named `.rsyncignore` (or any name you prefer) and add the patterns of files or directories you want to exclude. Each pattern should be on a separate line. For example:
+
+```
+venv/
+node_modules/
+*.log
+```
+
+Use the `--exclude-from` option with `rsync` to specify this file:
+
+```sh
+rsync -avz --exclude-from='.rsyncignore' /path/to/source/ /path/to/destination/
+```
+
+- `--exclude-from='.rsyncignore'`: This tells `rsync` to read the exclusion patterns from the specified file `.rsyncignore`. This is useful for managing multiple exclusions without cluttering the command line.
+
+#### 4. Delete files in the destination that are not present in the source
+
+```sh
+rsync -avz --delete /path/to/source/ /path/to/destination/
+```
+
+- `--delete`: Removes files from the destination that are not present in the source.
+
+#### 5. Dry run to preview changes
+
+```sh
+rsync -avz --dry-run /path/to/source/ /path/to/destination/
+```
+
+- `--dry-run`: Simulates the synchronization process without making any changes, useful for verifying what will be transferred.
+
+#### 6. Limit bandwidth usage
+
+```sh
+rsync -avz --bwlimit=5000 /path/to/source/ /path/to/destination/
+```
+
+- `--bwlimit=5000`: Limits the transfer speed to 5000 KB/s.
+
+#### 7. Logging transfer details
+
+```sh
+rsync -avz --log-file=/path/to/logfile.log /path/to/source/ /path/to/destination/
+```
+
+- `--log-file=/path/to/logfile.log`: Records the details of the transfer to a specified log file.

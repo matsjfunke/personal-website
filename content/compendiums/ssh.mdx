@@ -1,0 +1,136 @@
+---
+title: "The SSH Guide"
+description: "Everything you should now about SSH"
+author: "matsjfunke"
+date: "2024-12-21"
+---
+
+### Introduction
+
+This guide covers SSH (Secure Shell), a protocol for secure communication and remote access between computers.
+It provides an overview of the SSH protocol and practical usage examples, such as generating keys, configuring server access, and managing users.
+
+### SSH Keys
+
+- **Public Key:** Used for one-way encryption. It encrypts data that only the corresponding private key can decrypt. Share this key with servers you want to access.
+- **Private Key:** Decrypts data encrypted with the public key, allowing secure access and communication. Store this key securely on your local machine and protect it with a strong passphrase. Never share your private key with anyone.
+
+### SSH Protocol
+
+![SSH protocol flowchart](/images/ssh-protocol.png)
+
+1. **Client sends public key to server:**
+
+   - The server checks this public key against its list of authorized keys to verify if the client is permitted to connect.
+   - The client and server agree on SSH protocol versions and encryption methods, then perform a key exchange to secure the channel.
+
+2. **Server sends its public key to client:**
+
+   - The client verifies this key against its known hosts list to ensure the server is trusted.
+
+3. **Server sends a challenge (string) encrypted with the client's public key:**
+
+   - This ensures that only the client with the corresponding private key can decrypt it.
+
+4. **Client decrypts the challenge and sends it back:**
+
+   - The server verifies the decrypted string to confirm the client's identity.
+
+5. **Session Establishment:**
+   - After successful authentication, a secure, encrypted session is established, allowing the client to execute commands and transfer data safely.
+
+### SSH Usage
+
+1. generate ssh-key in you terminal
+
+```sh
+cd ~/.ssh
+
+ssh-keygen -t ed25519
+
+Enter file in which to save the key (/path/to/your/.ssh/id_ed25519): <project-name>
+
+Enter passphrase (empty for no passphrase): <CR> or enter any passphrase
+```
+
+2. add pbulic key to server (usually done via webinterface of hosting provider)
+
+copy the public key
+
+```sh
+cat ~/.ssh/<project-name>.pub
+```
+
+3. give permission to read privatekey-file
+
+```sh
+chmod 400 ~/.ssh/<project-name>
+```
+
+4. Allow network access via SSH
+
+   - Source IP: Any IPv4, Any IPv6
+   - Protocol: TCP
+   - Port: 22
+
+5. Connenct to server via SSH
+
+```sh
+ssh -i ~/.ssh/<project-name> root@<IPv4>
+```
+
+## Managing SSH Users and Permissions
+
+In this section, we'll cover managing users and permissions with SSH to ensure only authorized individuals access your servers, enhancing security.
+
+1. Create a non-root user with sudo privileges
+
+```sh
+adduser <username>
+
+usermod -aG sudo <username>
+```
+
+2. Copy SSH key for new user
+
+```sh
+mkdir -p /home/<username>/.ssh
+cp ~/.ssh/authorized_keys /home/<username>/.ssh/
+chown -R <username>:<username> /home/<username>/.ssh
+chmod 700 /home/<username>/.ssh
+chmod 600 /home/<username>/.ssh/authorized_keys
+```
+
+3. Test sudo access with the new user:
+
+```sh
+su - <username>
+# with new user run
+sudo whoami  # Should return "root"
+```
+
+4. After confirming everything works, you should update the SSH configuration to disable root login:
+
+```sh
+sudo vim /etc/ssh/sshd_config
+```
+
+Change or add these lines:
+
+```sh
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+```
+
+5. Restart the SSH service:
+
+```sh
+sudo systemctl restart ssh
+```
+
+6. Test new SSH connection in a new terminal window before logging out:
+
+```sh
+ssh -i ~/.ssh/<project-name> <username>@<IPv4>
+```

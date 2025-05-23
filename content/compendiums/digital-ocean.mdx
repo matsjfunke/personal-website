@@ -1,0 +1,73 @@
+---
+title: "DigitalOcean Droplet Setup"
+description: "Getting Started Tutorial for DigitalOcean Droplet / VPS"
+author: "matsjfunke"
+date: "2024-10-22"
+---
+
+### Configuration
+
+- choose Location, OS image, Droplet Type, CPU options
+
+### SSH setup
+
+- generate ssh-key in you terminal
+
+```sh
+cd ~/.ssh
+
+ssh-keygen -t ed25519 -f ~/.ssh/<project-name>
+
+Enter passphrase (empty for no passphrase): <CR> / hit enter
+```
+
+- to add ssh-key
+
+```sh
+cat ~/.ssh/<project-name>.pub
+```
+
+copy it and paste it in DigitalOcean website and name th public key
+
+### Create Droplet
+
+### Allow incoming traffic on ports 80 and 443
+
+on web dashboard:
+
+- go to Networking -> Firewalls -> Create Firewall -> select http & https, add droplet -> create Firewall
+
+### SSH into server
+
+copy ip-address on DigitalOcean
+
+```sh
+ssh -i ~/.ssh/<project-name> root@<ip-address>
+```
+
+### File transfer / management setup
+
+#### 1. git
+
+```sh
+sudo apt update
+sudo apt upgrade -y
+sudo reboot
+# ssh into server again
+sudo apt install git -y
+# now generate an access token on github, done
+git clone https://<token>@github.com/your-username/your-repo.git
+git pull https://<token>@github.com/your-username/your-repo.git
+```
+
+#### 2. rsync
+
+```sh
+sudo apt update
+sudo apt upgrade -y
+sudo reboot
+# ssh into server again
+sudo apt install rsync -y
+# use rsync on your maschine to send to server
+rsync -avz /source/directory/ user@remote:/destination/directory/
+```

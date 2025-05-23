@@ -1,0 +1,157 @@
+---
+title: "How to configure firewalls for VPS security?"
+description: "Guide to Setting Up Firewalls on Your Linux VPS"
+author: "matsjfunke"
+date: "2024-12-25"
+---
+
+## Introduction
+
+Firewalls are essential for securing your Virtual Private Server because they act as a barrier between your server and potential threats from the internet.
+Firewalls allow you to block or accept incoming and outgoing network traffic.
+Most large hosting providers offer firewall configuration through their websites, but since servers are usually just Linux machines, you can also set up firewalls via the command line interface.
+
+## General Firewall Considerations
+
+1. Determine Necessary Services:
+
+   Identify which services your VPS needs to provide (e.g., web server, SSH access) and ensure only those ports are open. Common ports include 80 and 443 for HTTP/HTTPS, and 22 for SSH.
+
+2. Block Unnecessary Ports:
+
+   Close all ports that are not required for your server's operations to minimize potential attack vectors.
+
+3. Use Default Deny Policy:
+
+   Implement a default deny policy where all incoming traffic is blocked by default, and only explicitly allowed traffic is permitted.
+   This approach minimizes exposure to potential threats by ensuring only necessary services are accessible.
+
+4. Consider Rate Limiting:
+
+   Implement rate limiting on services like SSH to prevent brute force attacks.
+
+5. Logging and Alerts:
+
+   Enable logging for firewall activity and set up alerts for suspicious activities to respond quickly to potential threats.
+
+## Tools to Implement firewalls
+
+### iptables:
+
+- iptables is a legacy firewall system with linear rule processing, fragmented tooling (ip6tables, arptables), and performance limitations when handling complex configurations.
+- offers fine-grained control over network packet filtering
+
+### UFW:
+
+- Simplified and user-friendly, ideal for straightforward setups and beginners. It abstracts the complexity of `iptables` with easy-to-use commands.
+
+```sh
+# UFW Basic Commands
+ufw default deny incoming     # Block all incoming traffic
+ufw deny from 203.0.113.0/24  # Block traffic from a specific subnet
+ufw default allow outgoing    # Allow all outgoing traffic
+ufw allow ssh                 # Allow SSH (port 22)
+ufw allow http                # Allow HTTP (port 80)
+ufw allow https               # Allow HTTPS (port 443)
+ufw allow 53                  # Allow DNS
+ufw allow 25                  # Allow SMTP
+```
+
+### nftables:
+
+- modern replacement for `iptables`, improved syntax and functionality
+- more powerful and flexible, suitable for complex configurations and advanced users. It offers improved syntax and functionality over `iptables`.
+
+**_In nftables, a table is a container that organizes chains, typically by traffic type (e.g., inet for IPv4 and IPv6). A chain is a sequence of rules associated with specific network hooks (e.g., input, output) that determine how packets are processed. Rules are individual instructions within chains that specify criteria and actions for handling packets, such as accepting or dropping them._**
+
+`nftables` can be used in two ways:
+
+1. **Command-Line Interface**: Enter commands directly in the terminal for quick, interactive rule changes and testing.
+
+```sh
+# Flush Existing Rules
+nft flush ruleset
+
+# Create a Table
+nft add table inet filter
+
+# Create Chains
+nft add chain inet filter input { type filter hook input priority 0 \; policy drop \; }
+nft add chain inet filter forward { type filter hook forward priority 0 \; policy drop \; }
+nft add chain inet filter output { type filter hook output priority 0 \; policy accept \; }
+
+# Allow Established Connections
+nft add rule inet filter input ct state {established, related} accept
+
+# Allow Loopback Traffic
+nft add rule inet filter input iifname lo accept
+
+# Allow Specific Services (like SSH, HTTP, and HTTPS)
+nft add rule inet filter input tcp dport {22, 80, 443} accept
+
+# Rate Limiting (SSH example)
+nft add rule inet filter input tcp dport 22 ct state new limit rate 15/minute accept
+
+# Logging
+nft add rule inet filter input counter log prefix "nftables drop: " drop
+```
+
+2. **Scripted Configuration**: Use scripts for a consistent, repeatable setup, ideal for structured and automated deployments.
+
+Create the script using vim: `vim setup_nftables.sh` then, add the following content to the script:
+
+```sh
+#!/usr/bin/env nft -f
+
+# Flush existing rules
+flush ruleset
+
+# Create a new table
+table inet filter {
+    # Create input chain
+    chain input {
+        type filter hook input priority 0;
+        policy drop; # Default deny policy for incoming traffic
+
+        # Allow established and related connections
+        ct state {established, related} accept
+
+        # Allow loopback interface traffic
+        iifname lo accept
+
+        # Allow SSH, HTTP, and HTTPS
+        tcp dport {22, 80, 443} accept
+    }
+
+    # Create forward chain
+    chain forward {
+        type filter hook forward priority 0;
+        policy drop; # Default deny policy for forwarded traffic
+    }
+
+    # Create output chain
+    chain output {
+        type filter hook output priority 0;
+        policy accept; # Default allow policy for outgoing traffic
+    }
+}
+
+# Rate limiting for SSH to prevent brute force attacks
+nft add rule inet filter input tcp dport 22 ct state new limit rate 15/minute accept
+
+# Logging for dropped packets
+nft add rule inet filter input counter log prefix "nftables drop: " drop
+```
+
+then make script executable and run it:
+
+```sh
+chmod +x setup_nftables.sh
+sudo ./setup_nftables.sh
+```
+
+Save the configuration to make these rules persistent across reboots
+
+```sh
+sudo cp setup_nftables.sh /etc/nftables.conf
+```

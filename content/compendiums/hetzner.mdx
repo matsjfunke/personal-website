@@ -1,0 +1,180 @@
+---
+title: "Hetzner VPS Setup"
+description: "Getting Started Tutorial for Hetzner VPS"
+author: "matsjfunke"
+date: "2024-12-20"
+---
+
+## Introduction
+
+This is a comprehensive guide to setting up a Virtual Private Server (VPS) on Hetzner Cloud.
+Simply follow the steps from start to finish to ensure a smooth setup process.
+It covers everything from creating a server, setting up SSH access, configuring firewalls, managing users, and transferring files.
+By the end of this guide, you will have a fully operational VPS tailored to your project's needs.
+
+## Go to hetzner cloud
+
+- add server
+- select server components:
+  - Location
+  - Operating system
+  - CPU cores & type
+  - RAM
+  - Storage
+
+## Setup SSH
+
+#### 1. generate ssh-key in you terminal
+
+```sh
+cd ~/.ssh
+
+ssh-keygen -t ed25519
+
+Enter file in which to save the key (/path/to/your/.ssh/id_ed25519): <project-name>
+
+Enter passphrase (empty for no passphrase): <CR> or enter any passphrase
+```
+
+#### 2. add pbulic key to hetzner
+
+copy the public key and paste into field hetzner console
+
+```sh
+cat ~/.ssh/project-name.pub
+```
+
+#### 3. give permission to read privatekey-file
+
+```sh
+chmod 400 ~/.ssh/<project-name>
+```
+
+### Add firewall on Hetzner dashboard
+
+**1. Click "Add Rule" ("Regel hinzufügen") and create the following rules:**
+
+#### SSH Access
+
+- Source IP: Any IPv4, Any IPv6
+- Protocol: TCP
+- Port: 22
+
+#### HTTP Access
+
+- Source IP: Any IPv4, Any IPv6
+- Protocol: TCP
+- Port: 80
+
+#### HTTPS Access
+
+- Source IP: Any IPv4, Any IPv6
+- Protocol: TCP
+- Port: 443
+
+**2. Verify that:**
+
+- All rules show as active
+- Status shows "Vollständig angewendet" (Fully applied)
+- Rules are applied to the selected resource ("Angewendet auf 1 Ressource")
+
+### Name server
+
+choose a descriptive name fitting your project
+
+## Connenct to server via ssh
+
+- copy server IPv4 address from hetzner server dashboard
+
+```sh
+ssh -i ~/.ssh/<project-name> root@<IPv4>
+```
+
+### Update and upgrade system packages after first login
+
+```sh
+sudo apt update
+sudo apt upgrade -y
+sudo reboot
+```
+
+than ssh back into the server
+
+## User Management
+
+#### 1. Create a non-root user with sudo privileges
+
+```sh
+adduser <username>
+
+usermod -aG sudo <username>
+```
+
+#### 2. Copy SSH key for new user
+
+```sh
+mkdir -p /home/<username>/.ssh
+cp ~/.ssh/authorized_keys /home/<username>/.ssh/
+chown -R <username>:<username> /home/<username>/.ssh
+chmod 700 /home/<username>/.ssh
+chmod 600 /home/<username>/.ssh/authorized_keys
+```
+
+#### 3. Test sudo access with the new user:
+
+```sh
+su - <username>
+# with new user run
+sudo whoami  # Should return "root"
+```
+
+#### 4. After confirming everything works, you should update the SSH configuration to disable root login:
+
+```sh
+sudo vim /etc/ssh/sshd_config
+```
+
+Change or add these lines:
+
+```sh
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+```
+
+#### 5. Restart the SSH service:
+
+```sh
+sudo systemctl restart ssh
+```
+
+#### 6. Test new SSH connection in a new terminal window before logging out:
+
+```sh
+ssh -i ~/.ssh/<project-name> <username>@<IPv4>
+```
+
+## File transfer / management setup
+
+either git or rsync
+
+#### 1. git
+
+```sh
+sudo apt install git -y
+# now generate an access token on github, done
+git clone https://<token>@github.com/your-username/your-repo.git
+git pull https://<token>@github.com/your-username/your-repo.git
+```
+
+#### 2. rsync
+
+```sh
+sudo apt install rsync -y
+```
+
+Use rsync on your maschine to send to server
+
+```sh
+rsync -avz /source/directory/ <username>@<IPv4>:directory/
+```

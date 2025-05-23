@@ -1,0 +1,111 @@
+---
+title: "Basic Unix File and Directory Permissions"
+description: "Overview, explanation and how to change them"
+author: "elfeldos & matsjfunke"
+date: "2025-01-19"
+---
+
+### Introduction
+
+In Unix based Operating Systems, file and directory permissions are crucial for maintaining system security and ensuring that users have the appropriate access to resources. Permissions are divided into three categories: **owner**, **group**, and **others**. Each category can have different levels of access, defined by the ability to **read (`r`)**, **write (`w`)**, and **execute (`x`)**.
+
+### Categories of Permissions
+
+1. **Owner**: This is the user who owns the file or directory. The owner has specific permissions that can be different from the group and others.
+
+2. **Group**: Unix based Operating Systems allow users to be grouped together. Permissions can be set so that all members of a group have the same access to a file or directory.
+
+3. **Others**: This refers to all other users who are not the owner or part of the group. Permissions for others are usually the most restrictive.
+
+### Types of Permissions
+
+- **Read (`r`)**: Allows viewing the contents of a file or listing files within a directory.
+- **Write (`w`)**: Allows modifying the contents of a file or adding/removing files within a directory.
+- **Execute (`x`)**: For files, this allows running the file as a program. For directories, it allows accessing files within the directory.
+
+### Symbols and and their meaning
+
+- **Directories (d)**: Represented by a 'd' at the start of the permission string.
+- **Files (-)**: Represented by a '-' at the start of the permission string.
+
+For example, the permission string `-rwxr-xr--` can be broken down as follows:
+
+- **File**: `-`
+- **Owner**: `rwx` (read, write, execute)
+- **Group**: `r-x` (read, execute)
+- **Others**: `r--` (read only)
+
+## Numeric Representation
+
+In Unix based Operating Systems, file and directory permissions can also be represented numerically using a three-digit octal number. Each digit represents the permissions for the owner, group, and others, respectively. The permissions are calculated based on the sum of the following values:
+
+- **Read**: (`r`) = 4
+- **Write**: (`w`) = 2
+- **Execute**: (`x`) = 1
+
+Each permission set (owner, group, others) is represented by a digit ranging from 0 to 7. Here's how you calculate the value for each:
+
+- 0 No permissions (`---`)
+- 1 Execute only (`--x`)
+- 2 Write only (`-w-`)
+- 3 Write and execute (`-wx`)
+- 4 Read only (`r--`)
+- 5 Read and execute (`r-x`)
+- 6 Read and write (´rw-`)
+- 7 Read, write, and execute (`rwx`)
+
+### Examples
+
+**`644` (`rw-r--r--`)**:
+
+- Owner: rw- (4 + 2 = 6)
+- Group: r-- (4 = 4)
+- Others: r-- (4 = 4)
+  This means the owner can read and write, while the group and others can only read.
+
+**755 (rwxr-xr-x)**:
+
+- Owner: rwx (4 + 2 + 1 = 7)
+- Group: r-x (4 + 1 = 5)
+- Others: r-x (4 + 1 = 5)
+  This means the owner can read, write, and execute, while the group and others can read and execute.
+
+## Change Permissions
+
+To change permissions, you use the `chmod` (change mode) or chown (change owner) command.
+
+To change the permissions to `rwxrwxr-x` (`775`), you would use:
+
+```bash
+chmod 775 filename
+```
+
+This would set the permissions of your file to:
+
+- Owner: `rwx (4 + 2 + 1 = 7)`
+- Group: `rwx (4 + 2 + 1 = 7)`
+- Others: `r-x (4 + 1 = 5)`
+
+The chown command changes the ownership of a file or directory, allowing specification of a new owner and optionally a new group:
+
+```bash
+chown [new_owner][:new_group] [file/directory]
+```
+
+This would change the ownership of myfile.txt to newuser:
+
+```bash
+sudo chown newuser myfile.txt
+```
+
+This would change the ownership of myfile.txt to newuser and the group to newgroup:
+
+```bash
+sudo chown newuser:newgroup myfile.txt
+```
+
+This would change the ownership of mydirectory and all its contents (recursively) to newuser and newgroup.
+
+```bash
+sudo chown -R newuser:newgroup mydirectory
+```
