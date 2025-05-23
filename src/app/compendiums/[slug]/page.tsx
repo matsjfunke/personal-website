@@ -6,12 +6,11 @@ import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
 import { ArrowLeft } from "lucide-react";
 import { join } from "path";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
+import CodeBlock from "@/components/CodeBlock";
 import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
 interface Props {
@@ -142,62 +141,7 @@ export default async function CompendiumPage({ params }: Props) {
                     {...props}
                   />
                 ),
-                pre: ({ children, ...props }) => {
-                  // Extract the code element and its props
-                  const codeElement = children?.props?.children;
-                  const className = children?.props?.className || "";
-                  let language = className.replace("language-", "") || "text";
-
-                  // Language mappings
-                  if (language === "sh") language = "bash";
-                  if (language === "ascii") language = "text";
-
-                  if (typeof codeElement === "string") {
-                    return (
-                      <div className="my-6">
-                        <SyntaxHighlighter
-                          language={language}
-                          style={oneDark}
-                          customStyle={{
-                            background: "rgba(255, 255, 255, 0.05)",
-                            border: "1px solid rgba(255, 255, 255, 0.2)",
-                            borderRadius: "0.5rem",
-                            fontSize: "0.875rem",
-                            lineHeight: "1.5",
-                            margin: 0,
-                            padding: "1rem",
-                          }}
-                          codeTagProps={{
-                            style: {
-                              background: "transparent",
-                            },
-                          }}
-                          showLineNumbers={language !== "text"}
-                          lineNumberStyle={{
-                            color: "rgba(255, 255, 255, 0.3)",
-                            fontSize: "0.75rem",
-                            paddingRight: "1rem",
-                            borderRight: "1px solid rgba(255, 255, 255, 0.1)",
-                            marginRight: "1rem",
-                          }}
-                          {...props}
-                        >
-                          {codeElement}
-                        </SyntaxHighlighter>
-                      </div>
-                    );
-                  }
-
-                  // Fallback for non-string content
-                  return (
-                    <pre
-                      className="bg-white/5 border border-white/20 rounded-lg p-4 my-6 overflow-x-auto"
-                      {...props}
-                    >
-                      {children}
-                    </pre>
-                  );
-                },
+                pre: (props) => <CodeBlock {...props} />,
                 code: ({ children, className, ...props }) => {
                   // Check if this is an inline code element (not within a pre block)
                   const isInline = !className?.includes("language-");
