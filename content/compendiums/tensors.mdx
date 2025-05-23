@@ -1,0 +1,114 @@
+---
+title: "Thoughts on Tensors in DL"
+description: "Tensor concepts for deep learning: how DL tensors differ from mathematical tensors, core concepts, manipulation functions, and memory implementation."
+author: "matsjfunke"
+date: "2025-01-10"
+---
+
+## Tensor Relationships
+
+#### 1. deep learning tensors ≠ math / physics tensors
+
+- In deep learning, tensors are used as multidimensional arrays for data handling, unlike in math and physics, where they describe relationships between vectors and scalars.
+
+| Indexes Required | Computer Science | Mathematics | Tensor Type          |
+| ---------------- | ---------------- | ----------- | -------------------- |
+| 0                | number           | scalar      | 0-dimensional tensor |
+| 1                | array            | vector      | 1-dimensional tensor |
+| 2                | 2d-array         | matrix      | 2-dimensional tensor |
+| n                | nd-array         | nd-tensor   | n-dimensional tensor |
+
+## Tensor Concepts:
+
+**Rank**: how many indecies are need to refere to a specific data point within the tensor. (number of axes / dimensions)
+**Axes**: specific dimension of a tensor.
+**Length of Axes**: how many indecies are in this dimension, the elements of the last Axes are always numbers the others contain an n-dimensional array.
+**Shape**: Length of each Axis
+
+```python
+>>> import torch
+
+>>> dd = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]
+>>> t = torch.tensor(dd)
+
+>>> print(t)
+tensor([[1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]])
+
+>>> print(type(t))
+<class 'torch.Tensor'>
+
+>>> print(t.shape)
+torch.Size([3, 3]) # pytorch size = tensor shape
+>>> print(t.shape)
+```
+
+**Shape incodes all relevent information**
+
+## Tensor Manipulation Functions
+
+#### Reshaping:
+
+- changes shape but not underlying data points
+- reshapes must have enough positions so that every element fits
+
+```python
+>>> reshaped_t = t.reshape(1,9)
+>>> print(reshaped_t)
+    tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9]])
+
+>>> print(reshaped_t.shape)
+    torch.Size([1, 9])
+```
+
+#### Squeeze:
+
+- squeeze removes dimensions of size 1 from a tensor.
+- used to eliminate unnecessary dimensions that do not contribute to the data structure's complexity.
+
+```python
+>>> t = torch.tensor([[[1, 2, 3], [4, 5, 6]]])
+>>> print(t.shape)
+    torch.Size([1, 2, 3])
+
+>>> squeezed_t = t.squeeze()
+>>> print(squeezed_t.shape)
+    torch.Size([2, 3])
+```
+
+#### Flatten:
+
+- flatten converts a tensor into a one-dimensional tensor, effectively collapsing all its dimensions.
+- useful for preparing data for input into fully connected layers in neural networks.
+
+```python
+>>> t = torch.tensor([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+>>> flattened_t = t.flatten()
+>>> print(flattened_t)
+    tensor([1, 2, 3, 4, 5, 6, 7, 8, 9])
+>>> print(flattened_t.shape)
+    torch.Size([9])
+```
+
+## Low-Level workings
+
+Multidimensional arrays aka. tensors are reshaped and stored as one dimensional arrays in RAM.
+
+The position of each data point is calculated using strides, which determine how many steps are needed to move along each axis.
+
+The position of any element is calculated as:
+
+$$\text{position} = \sum_{i=0}^{n-1} \text{index}_i \times \text{stride}_i$$
+i.e.
+$$\text{position} = \text{row} \times \text{stride for rows} + \text{column} \times \text{stride for columns}$$
+
+For example, a grayscale image = (100,100) array, to find element (5,3):
+$$\text{position} = 5 \times 100 + 3 \times 1 = 503$$
+
+For example, an RGB image = (3, 100,100) array, to find element (2,6,4):
+$$\text{position} = 2 \times (100 \times 100) +  6 \times 100 + 4 \times 1 = 10604$$
