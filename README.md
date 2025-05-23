@@ -29,10 +29,13 @@ pnpm add -D <package-name>
 ## Scripts
 
 - `pnpm d` - Install deps & start dev server with Turbopack
-- `pnpm dev` - Strart dev server with Turbopack
+- `pnpm dev` - Start dev server with Turbopack
 - `pnpm build` - Build for production
 - `pnpm start` - Start production server
 - `pnpm lint` - Run ESLint
+- `pnpm format` - Format all files with Prettier
+- `pnpm format:check` - Check if files are properly formatted
+- `pnpm typecheck` - Run TypeScript type checking
 
 ## Tech Stack
 
@@ -42,3 +45,5 @@ pnpm add -D <package-name>
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Components**: [Radix UI](https://www.radix-ui.com/)
 - **Package Manager**: [pnpm](https://pnpm.io/)
+- **Formatting**: [Prettier](https://prettier.io/) with import sorting
+- **Code Quality**: [Husky](https://typicode.github.io/husky/)
