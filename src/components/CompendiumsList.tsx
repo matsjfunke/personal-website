@@ -6,11 +6,11 @@ import { CompendiumCard } from "@/components/CompendiumCard";
 import { SearchBar } from "@/components/SearchBar";
 import { CompendiumMeta } from "@/types/compendium";
 
-interface CompendiumsListProps {
+export function CompendiumsList({
+  compendiums,
+}: {
   compendiums: CompendiumMeta[];
-}
-
-export function CompendiumsList({ compendiums }: CompendiumsListProps) {
+}) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCompendiums = useMemo(() => {
@@ -36,6 +36,7 @@ export function CompendiumsList({ compendiums }: CompendiumsListProps) {
           placeholder="Search compendiums..."
           value={searchQuery}
           onChange={setSearchQuery}
+          autoFocus={true}
         />
       </div>
 

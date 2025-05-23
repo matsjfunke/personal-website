@@ -11,6 +11,7 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  autoFocus?: boolean;
 }
 
 export function SearchBar({
@@ -18,6 +19,7 @@ export function SearchBar({
   value,
   onChange,
   className = "",
+  autoFocus = false,
 }: SearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,6 +35,13 @@ export function SearchBar({
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Auto-focus when component mounts if autoFocus is true
+  useEffect(() => {
+    if (autoFocus && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   return (
     <div className={`relative ${className}`}>
