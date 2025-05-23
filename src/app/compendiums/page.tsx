@@ -2,6 +2,7 @@ import { readdir, readFile } from "fs/promises";
 import { join } from "path";
 import Link from "next/link";
 import matter from "gray-matter";
+import { ArrowRight } from "lucide-react";
 
 interface CompendiumMeta {
   title: string;
@@ -96,8 +97,9 @@ export default async function CompendiumsPage() {
                   <p className="text-white/80 leading-relaxed flex-grow">
                     {compendium.description}
                   </p>
-                  <div className="mt-4 text-white/60 group-hover:text-white/80 transition-colors">
-                    Read more →
+                  <div className="mt-4 text-white/60 group-hover:text-white/80 transition-colors flex items-center gap-2">
+                    <span>Read more</span>
+                    <ArrowRight className="w-4 h-4 transition-transform duration-200 group-active:translate-x-2" />
                   </div>
                 </article>
               </Link>

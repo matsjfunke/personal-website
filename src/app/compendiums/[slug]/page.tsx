@@ -62,9 +62,9 @@ export default async function CompendiumPage({ params }: Props) {
       <div className="container mx-auto px-4 max-w-4xl">
         <Link
           href="/compendiums"
-          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-8 group"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 duration-200 group-active:-translate-x-2" />
           Back to Compendiums
         </Link>
 
