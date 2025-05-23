@@ -240,27 +240,27 @@ export default async function CompendiumPage({ params }: Props) {
                   />
                 ),
                 table: (props) => (
-                  <div className="overflow-x-auto my-6">
-                    <table
-                      className="min-w-full border border-white/20 rounded-lg"
-                      {...props}
-                    />
+                  <div className="overflow-x-auto my-6 bg-white/5 border border-white/20 rounded-lg">
+                    <table className="min-w-full" {...props} />
                   </div>
                 ),
-                thead: (props) => <thead className="bg-white/5" {...props} />,
+                thead: (props) => <thead className="bg-white/10" {...props} />,
                 tbody: (props) => <tbody {...props} />,
                 tr: (props) => (
-                  <tr className="border-b border-white/10" {...props} />
+                  <tr
+                    className="border-b border-white/10 last:border-b-0"
+                    {...props}
+                  />
                 ),
                 th: (props) => (
                   <th
-                    className="px-4 py-3 text-left text-white font-semibold border-r border-white/10 last:border-r-0"
+                    className="px-4 py-3 text-left text-white font-semibold border-r border-white/10 last:border-r-0 first:pl-4 last:pr-4 first:rounded-tl-lg last:rounded-tr-lg"
                     {...props}
                   />
                 ),
                 td: (props) => (
                   <td
-                    className="px-4 py-3 text-white/90 border-r border-white/10 last:border-r-0 text-sm"
+                    className="px-4 py-3 text-white/90 border-r border-white/10 last:border-r-0 text-sm first:pl-4 last:pr-4"
                     {...props}
                   />
                 ),
