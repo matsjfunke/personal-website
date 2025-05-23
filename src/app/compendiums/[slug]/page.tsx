@@ -196,6 +196,12 @@ export default async function CompendiumPage({ params }: Props) {
                     {...props}
                   />
                 ),
+                a: (props) => (
+                  <a
+                    className="text-blue-400 underline hover:text-blue-300 transition-colors"
+                    {...props}
+                  />
+                ),
               }}
             />
           </div>
