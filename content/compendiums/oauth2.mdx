@@ -35,7 +35,7 @@ The user logs into their account on the resource server and grants the applicati
 
 After successful authorization, the user is redirected to the callback URL with the appended authorization code:
 
-```
+```text
 https://app-domain.com/CALLBACK_URL?code=AUTHORIZATION_CODE
 ```
 
@@ -43,7 +43,7 @@ https://app-domain.com/CALLBACK_URL?code=AUTHORIZATION_CODE
 
 The application sends the following parameters to the resource server to exchange the authorization code for an access token:
 
-```
+```text
 https://api-auth-domain.com/oauth/token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&grant_type=authorization_code&code=AUTHORIZATION_CODE&redirect_uri=CALLBACK_URL
 ```
 

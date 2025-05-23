@@ -46,6 +46,9 @@ export default function CodeBlock({ children, ...props }: CodeBlockProps) {
   if (typeof codeElement === "string") {
     return (
       <div className="my-6 relative">
+        <div className="absolute top-3 left-3 z-10 px-2 py-1 bg-white/10 rounded text-xs text-white/70 font-mono">
+          {language}
+        </div>
         <button
           onClick={handleCopy}
           className="absolute top-3 right-3 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors duration-200"
