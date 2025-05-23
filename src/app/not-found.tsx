@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { House } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
+
 import confetti from "canvas-confetti";
+import { House } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   const pathname = usePathname();

@@ -1,5 +1,7 @@
 "use client";
+
 import React from "react";
+
 import { SparklesCore } from "@/components/ui/sparkles";
 
 export default function Funken() {
@@ -30,4 +32,4 @@ export default function Funken() {
       </div>
     </div>
   );
-} 
+}

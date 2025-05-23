@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+
 import { CompendiumCard } from "@/components/CompendiumCard";
 import { SearchBar } from "@/components/SearchBar";
 import { CompendiumMeta } from "@/types/compendium";
@@ -63,7 +64,8 @@ export function CompendiumsList({ compendiums }: CompendiumsListProps) {
             <div className="mb-6 text-center">
               <p className="text-white/60">
                 Found {filteredCompendiums.length} compendium
-                {filteredCompendiums.length !== 1 ? "s" : ""} matching &ldquo;{searchQuery}&rdquo;
+                {filteredCompendiums.length !== 1 ? "s" : ""} matching &ldquo;
+                {searchQuery}&rdquo;
               </p>
             </div>
           )}
@@ -76,4 +78,4 @@ export function CompendiumsList({ compendiums }: CompendiumsListProps) {
       )}
     </>
   );
-} 
+}

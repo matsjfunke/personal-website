@@ -1,10 +1,12 @@
-import { readFile, readdir } from "fs/promises";
-import { join } from "path";
-import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+
+import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
+import { ArrowLeft } from "lucide-react";
+import { join } from "path";
+
 import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
 interface Props {

@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { Search, Command } from "lucide-react";
+import { useEffect, useRef } from "react";
+
+import { Command, Search } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 
 interface SearchBarProps {
@@ -11,7 +13,12 @@ interface SearchBarProps {
   className?: string;
 }
 
-export function SearchBar({ placeholder, value, onChange, className = "" }: SearchBarProps) {
+export function SearchBar({
+  placeholder,
+  value,
+  onChange,
+  className = "",
+}: SearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Handle Cmd+F keyboard shortcut
@@ -35,7 +42,9 @@ export function SearchBar({ placeholder, value, onChange, className = "" }: Sear
         type="text"
         placeholder={placeholder}
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.value)
+        }
         className="pl-10 pr-16 bg-black/40 border-white/20 text-white placeholder:text-white/60 focus:border-white/40 focus:ring-white/20"
       />
       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-white/40 text-sm">
@@ -44,4 +53,4 @@ export function SearchBar({ placeholder, value, onChange, className = "" }: Sear
       </div>
     </div>
   );
-} 
+}

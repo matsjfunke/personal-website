@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CompendiumMeta } from "@/types/compendium";
+import { CardSpotlight } from "./ui/card-spotlight";
 
 interface CompendiumCardProps {
   compendium: CompendiumMeta;
@@ -8,11 +9,11 @@ interface CompendiumCardProps {
 
 export function CompendiumCard({ compendium }: CompendiumCardProps) {
   return (
-    <Link
-      href={`/compendiums/${compendium.slug}`}
-      className="block group"
-    >
-      <article className="border border-white/20 rounded-lg p-6 hover:border-white/40 transition-colors bg-black/40 backdrop-blur-sm h-full flex flex-col">
+    <CardSpotlight>
+      <Link
+        href={`/compendiums/${compendium.slug}`}
+        className="block group"
+      >
         <header className="mb-4">
           <h2 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-white/90 transition-colors">
             {compendium.title}
@@ -35,7 +36,7 @@ export function CompendiumCard({ compendium }: CompendiumCardProps) {
           <span>Read more</span>
           <ArrowRight className="w-4 h-4 transition-transform duration-200 group-active:translate-x-2" />
         </div>
-      </article>
-    </Link>
+      </Link>
+    </CardSpotlight>
   );
 } 

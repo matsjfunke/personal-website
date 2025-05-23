@@ -11,4 +11,4 @@ export interface CompendiumDetail {
   frontmatter: CompendiumMeta;
   title: string;
   slug: string;
-} 
+}

@@ -1,6 +1,7 @@
-import { readdir, readFile } from "fs/promises";
-import { join } from "path";
+import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
+import { join } from "path";
+
 import { CompendiumsList } from "@/components/CompendiumsList";
 import { CompendiumMeta } from "@/types/compendium";
 

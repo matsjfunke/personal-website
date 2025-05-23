@@ -23,8 +23,9 @@ The application forwards the user to the resource server with specific parameter
 - **`scope`** = Specifies the levels of access that the app is requesting
 
 **Optional PKCE Parameters (Proof Key for Code Exchange):**
+
 - **`code_challenge`** = Base64-URL encoded SHA256 hash of the code verifier
-- **`code_challenge_method`** =  Usually `S256` (SHA256) for hashing
+- **`code_challenge_method`** = Usually `S256` (SHA256) for hashing
 
 ### Step 2. User Authorization
 
@@ -47,12 +48,14 @@ https://api-auth-domain.com/oauth/token?client_id=CLIENT_ID&client_secret=CLIENT
 ```
 
 **Parameters:**
+
 - **`CLIENT_ID`**: Unique app identifier from registration
 - **`CLIENT_SECRET`**: Secret for app authentication
 - **`AUTHORIZATION_CODE`**: The code received in step 3
 - **`CALLBACK_URL`**: The same redirect URI used in step 1
 
 **Additional PKCE Parameter (if used):**
+
 - **`code_verifier`**: A cryptographically random string (43-128 characters) used to generate the code_challenge
 
 ### Step 5. Access Token Response
@@ -75,6 +78,7 @@ The resource server responds with an access token and additional information:
 ```
 
 **Response Fields:**
+
 - **`ACCESS_TOKEN`**: Used to authenticate user requests to the API
 - **`REFRESH_TOKEN`**: Used to obtain new access tokens when the current one expires
 - **`expires_in`**: Token lifetime in seconds
