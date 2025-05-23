@@ -1,0 +1,82 @@
+---
+title: "OAuth 2.0 Authorization Flow"
+description: "Understanding the OAuth 2.0 authorization flow for secure third-party access"
+author: "matsjfunke"
+date: "2025-03-06"
+---
+
+### Introduction
+
+OAuth 2.0 is an authorization framework that allows users to **grant specific access to third-party applications without sharing passwords**. It provides a secure way for applications to access user resources on behalf of the user, with clearly defined scopes and permissions. The OAuth 2.0 flow involves multiple steps between the user, the application, and the resource server to ensure secure authorization.
+
+## The OAuth 2.0 Authorization Flow
+
+The OAuth 2.0 authorization process consists of five main steps that ensure secure access to user resources:
+
+### Step 1. Authorization Request
+
+The application forwards the user to the resource server with specific parameters:
+
+- **`client_id`** = `CLIENT_ID`: Unique app identifier from registration
+- **`redirect_uri`** = `CALLBACK_URL`: Redirect URL for the user after authorization code is granted
+- **`response_type`** = Specifies that the app is requesting an OAuth authorization
+- **`scope`** = Specifies the levels of access that the app is requesting
+
+**Optional PKCE Parameters (Proof Key for Code Exchange):**
+- **`code_challenge`** = Base64-URL encoded SHA256 hash of the code verifier
+- **`code_challenge_method`** =  Usually `S256` (SHA256) for hashing
+
+### Step 2. User Authorization
+
+The user logs into their account on the resource server and grants the application permission to access specified data (defined in the **scope** parameter). This step ensures that the user explicitly consents to the requested access.
+
+### Step 3. Authorization Code Delivery
+
+After successful authorization, the user is redirected to the callback URL with the appended authorization code:
+
+```
+https://app-domain.com/CALLBACK_URL?code=AUTHORIZATION_CODE
+```
+
+### Step 4. Access Token Request
+
+The application sends the following parameters to the resource server to exchange the authorization code for an access token:
+
+```
+https://api-auth-domain.com/oauth/token?client_id=CLIENT_ID&client_secret=CLIENT_SECRET&grant_type=authorization_code&code=AUTHORIZATION_CODE&redirect_uri=CALLBACK_URL
+```
+
+**Parameters:**
+- **`CLIENT_ID`**: Unique app identifier from registration
+- **`CLIENT_SECRET`**: Secret for app authentication
+- **`AUTHORIZATION_CODE`**: The code received in step 3
+- **`CALLBACK_URL`**: The same redirect URI used in step 1
+
+**Additional PKCE Parameter (if used):**
+- **`code_verifier`**: A cryptographically random string (43-128 characters) used to generate the code_challenge
+
+### Step 5. Access Token Response
+
+The resource server responds with an access token and additional information:
+
+```json
+{
+  "access_token": "ACCESS_TOKEN",
+  "token_type": "bearer",
+  "expires_in": 2592000,
+  "refresh_token": "REFRESH_TOKEN",
+  "scope": "read",
+  "uid": 100101,
+  "info": {
+    "name": "Mark E. Mark",
+    "email": "mark@thefunkybunch.com"
+  }
+}
+```
+
+**Response Fields:**
+- **`ACCESS_TOKEN`**: Used to authenticate user requests to the API
+- **`REFRESH_TOKEN`**: Used to obtain new access tokens when the current one expires
+- **`expires_in`**: Token lifetime in seconds
+- **`scope`**: The actual permissions granted
+- **`token_type`**: Usually "bearer" for OAuth 2.0
