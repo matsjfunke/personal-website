@@ -12,11 +12,13 @@ export default function AboutMeCarusel() {
       {/* Horizontal scrollable row */}
       <div
         className="flex gap-6 overflow-x-auto overflow-y-hidden px-4"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-          WebkitScrollbar: { display: "none" },
-        }}
+        style={
+          {
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitScrollbar: "none",
+          } as React.CSSProperties
+        }
       >
         {aboutMeItems.map((item, index) => (
           <div
