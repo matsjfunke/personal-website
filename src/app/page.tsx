@@ -1,3 +1,4 @@
+import AboutMeCarusel from "@/components/AboutMeCarusel";
 import Funken from "@/components/Funken";
 
 export default function Home() {
@@ -5,6 +6,9 @@ export default function Home() {
     <div className="min-h-[90vh] bg-black text-white">
       <div className="container mx-auto px-4">
         <Funken />
+        <div className="mt-16 mb-16">
+          <AboutMeCarusel />
+        </div>
       </div>
     </div>
   );
