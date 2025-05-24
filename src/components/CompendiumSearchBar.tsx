@@ -25,7 +25,7 @@ export function CompendiumSearchBar({
 }: CompendiumSearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle Cmd+K (or custom commandKey) keyboard shortcut
+  // Handle Cmd+K (or custom commandKey) keyboard shortcut and Escape key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -34,6 +34,9 @@ export function CompendiumSearchBar({
       ) {
         event.preventDefault();
         searchInputRef.current?.focus();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        searchInputRef.current?.blur();
       }
     };
 
