@@ -21,11 +21,11 @@ export function CompendiumSearchBar({
   onChange,
   className = "",
   autoFocus = false,
-  commandKey = "K",
+  commandKey = "F",
 }: CompendiumSearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle Cmd+K (or custom commandKey) keyboard shortcut and Escape key
+  // Handle Cmd+F (or custom commandKey) keyboard shortcut and Escape key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (

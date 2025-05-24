@@ -6,13 +6,14 @@ import Link from "next/link";
 
 import { BookOpenText, Brain, House, StickyNote } from "lucide-react";
 
-import { SearchBar } from "@/components/ui/searchbar";
+import { CommandDialog } from "@/components/ui/command-dialog";
+import { CommandTrigger } from "@/components/ui/command-trigger";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -43,8 +44,9 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav
-      className={`
+    <>
+      <nav
+        className={`
           fixed top-0 left-0 right-0 z-[9999] 
           transition-all duration-200 border-b border-neutral-800
           ${
@@ -53,59 +55,61 @@ const Navbar = () => {
               : "bg-black/50"
           }
         `}
-    >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
-            >
-              <House className="w-4 h-4" />
-              <span className="hidden sm:inline">Home</span>
-            </Link>
-            <Link
-              href="/compendiums"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
-            >
-              <StickyNote className="w-4 h-4" />
-              <span className="hidden sm:inline">Compendiums</span>
-            </Link>
-            {/* <Link
-              href="/projects"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
-            >
-              <Wrench className="w-4 h-4" />
-              <span className="hidden sm:inline">Projects</span>
-            </Link> */}
-            <Link
-              href="/books"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
-            >
-              <BookOpenText className="w-4 h-4" />
-              <span className="hidden sm:inline">Books</span>
-            </Link>
-            <Link
-              href="/thoughts"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
-            >
-              <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">Thoughts</span>
-            </Link>
-          </div>
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex space-x-8">
+              <Link
+                href="/"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              >
+                <House className="w-4 h-4" />
+                <span className="hidden sm:inline">Home</span>
+              </Link>
+              <Link
+                href="/compendiums"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              >
+                <StickyNote className="w-4 h-4" />
+                <span className="hidden sm:inline">Compendiums</span>
+              </Link>
+              {/* <Link
+                href="/projects"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              >
+                <Wrench className="w-4 h-4" />
+                <span className="hidden sm:inline">Projects</span>
+              </Link> */}
+              <Link
+                href="/books"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              >
+                <BookOpenText className="w-4 h-4" />
+                <span className="hidden sm:inline">Books</span>
+              </Link>
+              <Link
+                href="/thoughts"
+                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              >
+                <Brain className="w-4 h-4" />
+                <span className="hidden sm:inline">Thoughts</span>
+              </Link>
+            </div>
 
-          <div className="flex items-center">
-            <SearchBar
-              placeholder={isSmallScreen ? "..." : "Search..."}
-              value={searchValue}
-              onChange={setSearchValue}
-              commandKey="K"
-              className="w-32 sm:w-64"
-            />
+            <div className="flex items-center">
+              <CommandTrigger
+                placeholder={isSmallScreen ? "..." : "Search..."}
+                onClick={() => setCommandOpen(true)}
+                commandKey="K"
+                className="w-32 sm:w-64"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen} />
+    </>
   );
 };
 
