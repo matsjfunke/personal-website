@@ -19,7 +19,7 @@ export function BookCard({ book, index }: BookCardProps) {
   return (
     <div className="group cursor-pointer">
       <div
-        className={`relative w-1/2 mx-auto aspect-[3/4] mb-4 rounded-lg transition-transform duration-300 ${rotateDirection} overflow-hidden group-hover:overflow-visible`}
+        className={`relative w-1/2 mx-auto aspect-[3/5] mb-4 rounded-lg transition-transform duration-300 ${rotateDirection} overflow-hidden group-hover:overflow-visible`}
       >
         {!imageError ? (
           <Image
