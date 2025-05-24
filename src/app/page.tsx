@@ -8,7 +8,7 @@ export default function Home() {
         <Funken />
       </div>
       <div className="pb-20">
-        <h2 className="text-3xl font-bold text-left text-white pb-8 pl-4">
+        <h2 className="text-2xl font-bold text-left text-white pb-8 pl-4">
           Things I&apos;m enjoying:
         </h2>
         <AboutMeCarousel />

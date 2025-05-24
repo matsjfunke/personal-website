@@ -12,6 +12,7 @@ interface SearchBarProps {
   onChange: (value: string) => void;
   className?: string;
   autoFocus?: boolean;
+  commandKey?: string;
 }
 
 export function SearchBar({
@@ -20,6 +21,7 @@ export function SearchBar({
   onChange,
   className = "",
   autoFocus = false,
+  commandKey = "K",
 }: SearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,7 +60,7 @@ export function SearchBar({
       />
       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-white/40 text-sm">
         <Command className="w-3 h-3" />
-        <span className="text-xs">F</span>
+        <span className="text-xs">{commandKey}</span>
       </div>
     </div>
   );
