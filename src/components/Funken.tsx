@@ -6,8 +6,8 @@ import { SparklesCore } from "@/components/ui/sparkles";
 
 export default function Funken() {
   return (
-    <div className="h-[40rem] w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
-      <h1 className="text-4xl lg:text-7xl font-bold text-center text-white relative z-20">
+    <div className="w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md pt-8 pb-8">
+      <h1 className="text-5xl lg:text-7xl font-bold text-center text-white relative z-20 mb-1">
         Mats J Funke
       </h1>
       <div className="w-[40rem] h-40 relative">
