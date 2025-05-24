@@ -11,7 +11,7 @@ export default function AboutMeCarusel() {
     <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-hidden">
       {/* Horizontal scrollable row */}
       <div
-        className="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 px-4"
+        className="flex gap-6 overflow-x-auto overflow-y-hidden px-4"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -21,7 +21,7 @@ export default function AboutMeCarusel() {
         {aboutMeItems.map((item, index) => (
           <div
             key={index}
-            className="relative bg-black rounded-lg overflow-hidden aspect-square min-w-[400px] w-[400px] group flex-shrink-0"
+            className="relative bg-black rounded-lg overflow-hidden aspect-square min-w-[350px] w-[350px] group flex-shrink-0"
           >
             {/* Image */}
             <div className="relative w-full h-full">
@@ -37,7 +37,7 @@ export default function AboutMeCarusel() {
 
               {/* Text overlay in top left */}
               <div className="absolute top-6 left-6 z-10">
-                <h3 className="text-white text-xl md:text-2xl lg:text-3xl font-bold drop-shadow-lg">
+                <h3 className="text-white text-2xl font-bold italic">
                   {item.text}
                 </h3>
               </div>

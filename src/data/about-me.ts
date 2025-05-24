@@ -2,23 +2,23 @@ import { AboutMe } from "@/types/about-me";
 
 export const aboutMeItems: AboutMe[] = [
   {
-    text: "Coding & Building",
-    image: "/about-me/coding.png",
+    text: "engineering @ langdock",
+    image: "/about-me/langdock.JPG",
   },
   {
-    text: "Brazilian Jiu-Jitsu",
-    image: "/about-me/blue-belt.JPG",
-  },
-  {
-    text: "Motorcycle Adventures",
-    image: "/about-me/mofa.jpg",
-  },
-  {
-    text: "Exploring Nature",
+    text: "taking the patagonia where it belongs",
     image: "/about-me/schwarzwald.jpeg",
   },
   {
-    text: "Working at Langdock",
-    image: "/about-me/langdock.JPG",
+    text: "tinkering / building stuff",
+    image: "/about-me/coding.png",
+  },
+  {
+    text: "cuddling with men (bjj)",
+    image: "/about-me/blue-belt.JPG",
+  },
+  {
+    text: "vintage mopeds",
+    image: "/about-me/mofa.jpg",
   },
 ];

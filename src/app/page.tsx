@@ -3,13 +3,11 @@ import Funken from "@/components/Funken";
 
 export default function Home() {
   return (
-    <div className="min-h-[90vh] bg-black text-white">
+    <div className="min-h-[90vh] bg-black text-white pt-24">
       <div className="container mx-auto px-4">
         <Funken />
-        <div className="mt-16 mb-16">
-          <AboutMeCarusel />
-        </div>
       </div>
+      <AboutMeCarusel />
     </div>
   );
 }
