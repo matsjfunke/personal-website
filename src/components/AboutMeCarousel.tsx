@@ -6,7 +6,7 @@ import Image from "next/image";
 
 import { aboutMeItems } from "@/data/about-me";
 
-export default function AboutMeCarusel() {
+export default function AboutMeCarousel() {
   return (
     <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] overflow-hidden">
       {/* Horizontal scrollable row */}
@@ -38,7 +38,7 @@ export default function AboutMeCarusel() {
               <div className="absolute inset-0 bg-black/30" />
 
               {/* Text overlay in top left */}
-              <div className="absolute top-6 left-6 z-10">
+              <div className="absolute top-3 left-3 z-10">
                 <h3 className="text-white text-2xl font-bold italic">
                   {item.text}
                 </h3>
