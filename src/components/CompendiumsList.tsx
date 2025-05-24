@@ -36,6 +36,7 @@ export function CompendiumsList({
           placeholder="Search compendiums..."
           value={searchQuery}
           onChange={setSearchQuery}
+          commandKey="F"
           autoFocus={true}
         />
       </div>
