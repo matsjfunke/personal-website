@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { CompendiumCard } from "@/components/CompendiumCard";
-import { SearchBar } from "@/components/SearchBar";
+import { CompendiumSearchBar } from "@/components/CompendiumSearchBar";
 import { CompendiumMeta } from "@/types/compendium";
 
 export function CompendiumsList({
@@ -32,7 +32,7 @@ export function CompendiumsList({
     <>
       {/* Search Bar */}
       <div className="max-w-md mx-auto mb-12">
-        <SearchBar
+        <CompendiumSearchBar
           placeholder="Search compendiums..."
           value={searchQuery}
           onChange={setSearchQuery}

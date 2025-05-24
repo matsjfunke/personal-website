@@ -25,10 +25,13 @@ export function SearchBar({
 }: SearchBarProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle Cmd+F keyboard shortcut
+  // Handle Cmd+K (or custom commandKey) keyboard shortcut
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.metaKey && event.key === "f") {
+      if (
+        event.metaKey &&
+        event.key.toLowerCase() === commandKey.toLowerCase()
+      ) {
         event.preventDefault();
         searchInputRef.current?.focus();
       }
@@ -36,7 +39,7 @@ export function SearchBar({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [commandKey]);
 
   // Auto-focus when component mounts if autoFocus is true
   useEffect(() => {

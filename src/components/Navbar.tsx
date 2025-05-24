@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { BookOpenText, Brain, House, StickyNote } from "lucide-react";
 
-import { SearchBar } from "@/components/SearchBar";
+import { SearchBar } from "@/components/ui/searchbar";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -99,6 +99,7 @@ const Navbar = () => {
               placeholder={isSmallScreen ? "..." : "Search..."}
               value={searchValue}
               onChange={setSearchValue}
+              commandKey="K"
               className="w-32 sm:w-64"
             />
           </div>
