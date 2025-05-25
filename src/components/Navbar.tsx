@@ -7,11 +7,15 @@ import Link from "next/link";
 import { BookOpenText, Brain, House, StickyNote } from "lucide-react";
 
 import { CommandPalette } from "@/components/CommandPalette";
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  // Enable global keyboard shortcuts
+  useGlobalShortcuts();
 
   useEffect(() => {
     setIsMounted(true);
