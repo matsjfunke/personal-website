@@ -24,7 +24,7 @@ import {
   SearchableItem,
   getAllSearchableContent,
 } from "@/data/searchableContent";
-import { getTypeLabel, searchContent } from "@/utils/search";
+import { getTypeLabel, searchContent } from "@/lib/search";
 
 import { VisuallyHidden } from "./ui/visually-hidden";
 
@@ -144,6 +144,10 @@ export function CommandPalette({
           >
             <VisuallyHidden>
               <Dialog.Title>Command Menu</Dialog.Title>
+              <Dialog.Description>
+                Search through pages and navigate quickly using keyboard
+                shortcuts.
+              </Dialog.Description>
             </VisuallyHidden>
 
             {/* Search Input */}

@@ -2,10 +2,6 @@
 
 A place to share my notes / references, books general stuff i'm passionate about.
 
-## Introduction
-
-Welcome to my personal website repository. This modern web application showcases my work, thoughts, and projects through a clean, performant interface built with cutting-edge technologies.
-
 **Tech Stack**:
 
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
@@ -19,6 +15,7 @@ Welcome to my personal website repository. This modern web application showcases
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
+- [Development Guidelines](#development-guidelines)
 - [Scripts](#scripts)
 - [Adding Dependencies](#adding-dependencies)
 - [Content Management](#content-management)
@@ -40,6 +37,27 @@ pnpm d
 Once the development server is running, you can access the application at:
 
 - **Website**: Open [http://localhost:3000](http://localhost:3000) to view the site
+
+## Development Guidelines
+
+### Where to Put Files
+
+- **React Components** → `src/components/`
+- **Custom Hooks** → `src/hooks/`
+- **Business Logic / Utilities** → `src/lib/`
+- **Type Definitions** → `src/types/`
+- **Content management / Static Data** → `src/data/`
+- **Pages** → `src/app/`
+- **MDX Content** → `content/`
+- **Images/Assets** → `public/page-which-uses-asset/`
+
+### Naming Conventions
+
+- **Components**: PascalCase (`CommandPalette.tsx`)
+- **Hooks**: camelCase with `use` prefix (`useGlobalShortcuts.ts`)
+- **Utilities**: camelCase (`searchContent.ts`)
+- **Types**: PascalCase (`SearchableItem.ts`)
+- **Constants**: UPPER_SNAKE_CASE
 
 ## Scripts
 
@@ -65,6 +83,41 @@ pnpm add -D <package-name>
 ```
 
 ## Content Management
+
+This website uses a static data approach for content management, with all content defined in TypeScript files in `src/data/`:
+
+### Static Data Structure
+
+- **`compendiums.ts`** - Technical guides and references metadata
+
+  - Each compendium has: `title`, `description`, `date`, `author`, and `slug`
+  - Actual content stored as MDX files in `content/compendiums` dir
+
+- **`books.ts`** - Book recommendations with personal thoughts
+
+  - Each book has: `title`, `image`, and `thoughts`
+
+- **`about-me.ts`** - Personal information for the about section
+  - Each has: `image` & `text`
+
+### Adding New Content
+
+**New Compendium:**
+
+1. Add metadata to `compendiums.ts`
+2. Create corresponding MDX file in `content/compendiums/[slug].mdx`
+
+**New Book:**
+
+1. Add book object to `books.ts` with title, image path, and thoughts
+2. Add book cover image to `public/books/`
+
+**Update About Me:**
+
+1. Modify `aboutMeItems` array in `about-me.ts`
+2. Add corresponding images to `public/about-me/`
+
+### MDX Features
 
 Compendiums use [MDX Remote](https://github.com/hashicorp/next-mdx-remote) with support for:
 
