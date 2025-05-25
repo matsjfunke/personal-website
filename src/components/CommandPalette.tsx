@@ -15,6 +15,7 @@ import {
   CornerDownLeft,
   FileText,
   House,
+  Option,
   Search,
   StickyNote,
 } from "lucide-react";
@@ -151,7 +152,7 @@ export function CommandPalette({
               <CommandPrimitive.Input
                 value={search}
                 onValueChange={setSearch}
-                placeholder="Search for apps and commands..."
+                placeholder="Search..."
                 className="flex h-6 w-full rounded-md bg-transparent text-sm text-neutral-200 outline-none placeholder:text-neutral-500 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
@@ -212,7 +213,13 @@ export function CommandPalette({
                 >
                   <House className="mr-3 h-4 w-4 text-neutral-400" />
                   <span className="text-neutral-200">Home</span>
-                  <span className="ml-auto text-xs text-neutral-500">Page</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="text-xs text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Option className="w-3 h-3" />
+                      <span>H</span>
+                    </div>
+                    <span className="text-xs text-neutral-500">Page</span>
+                  </div>
                 </CommandPrimitive.Item>
 
                 <CommandPrimitive.Item
@@ -224,7 +231,13 @@ export function CommandPalette({
                 >
                   <StickyNote className="mr-3 h-4 w-4 text-neutral-400" />
                   <span className="text-neutral-200">Compendiums</span>
-                  <span className="ml-auto text-xs text-neutral-500">Page</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="text-xs text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Option className="w-3 h-3" />
+                      <span>C</span>
+                    </div>
+                    <span className="text-xs text-neutral-500">Page</span>
+                  </div>
                 </CommandPrimitive.Item>
 
                 <CommandPrimitive.Item
@@ -236,7 +249,13 @@ export function CommandPalette({
                 >
                   <BookOpenText className="mr-3 h-4 w-4 text-neutral-400" />
                   <span className="text-neutral-200">Books</span>
-                  <span className="ml-auto text-xs text-neutral-500">Page</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="text-xs text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Option className="w-3 h-3" />
+                      <span>B</span>
+                    </div>
+                    <span className="text-xs text-neutral-500">Page</span>
+                  </div>
                 </CommandPrimitive.Item>
 
                 <CommandPrimitive.Item
@@ -248,7 +267,13 @@ export function CommandPalette({
                 >
                   <Brain className="mr-3 h-4 w-4 text-neutral-400" />
                   <span className="text-neutral-200">Thoughts</span>
-                  <span className="ml-auto text-xs text-neutral-500">Page</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="text-xs text-neutral-500 bg-neutral-800/50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Option className="w-3 h-3" />
+                      <span>T</span>
+                    </div>
+                    <span className="text-xs text-neutral-500">Page</span>
+                  </div>
                 </CommandPrimitive.Item>
               </CommandPrimitive.Group>
             </CommandPrimitive.List>
