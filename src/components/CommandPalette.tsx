@@ -279,9 +279,16 @@ export function CommandPalette({
             </CommandPrimitive.List>
 
             <div className="flex items-center justify-between border-t border-neutral-700/30 px-4 py-3 bg-neutral-900/50">
-              <div className="flex items-center gap-2 text-xs text-neutral-500">
-                <span>Open Page</span>
-                <CornerDownLeft className="h-3 w-3" />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-xs text-neutral-500">
+                  <span>Open Page</span>
+                  <CornerDownLeft className="h-3 w-3" />
+                </div>
+                <div className="h-4 w-px bg-neutral-700/50"></div>
+                <div className="flex items-center gap-2 text-xs text-neutral-500">
+                  <span>Close</span>
+                  <span className="text-xs text-neutral-500">ESC</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2 text-xs text-neutral-500">
