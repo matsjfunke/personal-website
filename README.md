@@ -104,8 +104,8 @@ This website uses a static data approach for content management, with all conten
 
 **New Compendium:**
 
-1. Add metadata to `compendiums.ts`
-2. Create corresponding MDX file in `content/compendiums/[slug].mdx`
+1. Create MDX file in `content/compendiums/new-file.mdx`
+2. `compendiums.ts` is auto-generated via pre-commit hook running `pnpm generate:compendiums` (`tsx scripts/generate-compendiums.ts`)
 
 **New Book:**
 
