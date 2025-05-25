@@ -14,8 +14,69 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Mats J Funke",
-  description: "Personal website of Mats J Funke",
+  title: {
+    default: "Mats J Funke",
+    template: "%s | Mats J Funke",
+  },
+  description:
+    "Personal website of Mats J Funke, sharing thoughts on software engineering, AI, and life.",
+  keywords: [
+    "Mats J Funke",
+    "Software Engineer",
+    "Technology",
+    "Programming",
+    "Web Development",
+    "Personal Website",
+    "Blog",
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Data Science",
+    "Deep Learning",
+    "Neural Networks",
+    "Computer Vision",
+    "Natural Language Processing",
+    "Compendiums",
+    "Books",
+  ],
+  authors: [{ name: "Mats J Funke" }],
+  creator: "Mats J Funke",
+  publisher: "Mats J Funke",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://matsjfunke.com"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://matsjfunke.com",
+    title: "Mats J Funke",
+    description:
+      "Personal website of Mats J Funke, sharing thoughts on software engineering, AI, and life.",
+    siteName: "Mats J Funke",
+  },
+  twitter: {
+    card: "summary",
+    title: "Mats J Funke",
+    description:
+      "Personal website of Mats J Funke, sharing thoughts on software engineering, AI, and life.",
+    creator: "@matsjfunke13",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
