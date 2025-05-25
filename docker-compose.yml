@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=mats.funke@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+    networks:
+      - web
+    restart: unless-stopped
+
+  personal-website:
+    build: .
+    container_name: personal-website
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.personal-website.rule=Host(`your-domain.com`)"
+      - "traefik.http.routers.personal-website.entrypoints=websecure"
+      - "traefik.http.routers.personal-website.tls.certresolver=myresolver"
+      - "traefik.http.services.personal-website.loadbalancer.server.port=3000"
+    networks:
+      - web
+    restart: unless-stopped
+    depends_on:
+      - traefik
+
+volumes:
+  traefik_letsencrypt:
+
+networks:
+  web:
+    external: false 
