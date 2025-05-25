@@ -4,7 +4,6 @@ import { Roboto } from "next/font/google";
 import "katex/dist/katex.min.css";
 
 import Footer from "@/components/Footer";
-import { GlobalShortcuts } from "@/components/GlobalShortcuts";
 import Navbar from "@/components/Navbar";
 
 import "./globals.css";
@@ -88,7 +87,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.className}>
       <body>
-        <GlobalShortcuts />
         <Navbar />
         {children}
         <Footer />
