@@ -24,6 +24,7 @@ interface CommandDialogProps {
 
 export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
   const [search, setSearch] = useState("");
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -39,8 +40,17 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
   }, [open, onOpenChange]);
 
   const runCommand = (command: () => void) => {
+    console.log("Running command...");
     onOpenChange(false);
     command();
+  };
+
+  const getItemClassName = (itemValue: string) => {
+    const baseClasses =
+      "relative flex cursor-pointer select-none items-center rounded-md px-2 py-2 text-sm text-white outline-none transition-colors";
+    const hoverClasses = hoveredItem === itemValue ? "bg-white/10" : "";
+    const stateClasses = "data-[selected=true]:bg-white/10 focus:bg-white/10";
+    return `${baseClasses} ${hoverClasses} ${stateClasses}`;
   };
 
   return (
@@ -50,11 +60,17 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
       label="Command Menu"
       className="fixed inset-0 z-[99999]"
     >
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
-      <div className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2">
+      <div
+        className="fixed inset-0 bg-black/50"
+        onClick={() => onOpenChange(false)}
+      />
+      <div
+        className="fixed left-1/2 top-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CommandPrimitive
           className="mx-auto overflow-hidden rounded-lg border border-white/10 bg-black/90 shadow-2xl backdrop-blur-md"
-          shouldFilter={false}
+          shouldFilter={true}
         >
           <VisuallyHidden>
             <Dialog.Title>Command Menu</Dialog.Title>
@@ -73,14 +89,20 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
               No results found.
             </CommandPrimitive.Empty>
 
-            <CommandPrimitive.Group heading="Navigation" className="mb-2">
+            <CommandPrimitive.Group className="mb-2">
               <div className="px-2 py-1.5 text-xs font-medium text-white/40 uppercase tracking-wider">
                 Navigation
               </div>
 
               <CommandPrimitive.Item
-                className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-white outline-none aria-selected:bg-white/10 aria-selected:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onSelect={() => runCommand(() => router.push("/"))}
+                value="home"
+                className={getItemClassName("home")}
+                onSelect={() => {
+                  console.log("Home selected");
+                  runCommand(() => router.push("/"));
+                }}
+                onMouseEnter={() => setHoveredItem("home")}
+                onMouseLeave={() => setHoveredItem(null)}
               >
                 <House className="mr-2 h-4 w-4" />
                 <span>Home</span>
@@ -88,8 +110,14 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
               </CommandPrimitive.Item>
 
               <CommandPrimitive.Item
-                className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-white outline-none aria-selected:bg-white/10 aria-selected:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onSelect={() => runCommand(() => router.push("/compendiums"))}
+                value="compendiums"
+                className={getItemClassName("compendiums")}
+                onSelect={() => {
+                  console.log("Compendiums selected");
+                  runCommand(() => router.push("/compendiums"));
+                }}
+                onMouseEnter={() => setHoveredItem("compendiums")}
+                onMouseLeave={() => setHoveredItem(null)}
               >
                 <StickyNote className="mr-2 h-4 w-4" />
                 <span>Compendiums</span>
@@ -97,8 +125,14 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
               </CommandPrimitive.Item>
 
               <CommandPrimitive.Item
-                className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-white outline-none aria-selected:bg-white/10 aria-selected:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onSelect={() => runCommand(() => router.push("/books"))}
+                value="books"
+                className={getItemClassName("books")}
+                onSelect={() => {
+                  console.log("Books selected");
+                  runCommand(() => router.push("/books"));
+                }}
+                onMouseEnter={() => setHoveredItem("books")}
+                onMouseLeave={() => setHoveredItem(null)}
               >
                 <BookOpenText className="mr-2 h-4 w-4" />
                 <span>Books</span>
@@ -106,8 +140,14 @@ export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
               </CommandPrimitive.Item>
 
               <CommandPrimitive.Item
-                className="relative flex cursor-default select-none items-center rounded-md px-2 py-2 text-sm text-white outline-none aria-selected:bg-white/10 aria-selected:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                onSelect={() => runCommand(() => router.push("/thoughts"))}
+                value="thoughts"
+                className={getItemClassName("thoughts")}
+                onSelect={() => {
+                  console.log("Thoughts selected");
+                  runCommand(() => router.push("/thoughts"));
+                }}
+                onMouseEnter={() => setHoveredItem("thoughts")}
+                onMouseLeave={() => setHoveredItem(null)}
               >
                 <Brain className="mr-2 h-4 w-4" />
                 <span>Thoughts</span>
