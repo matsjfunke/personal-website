@@ -21,7 +21,7 @@ export default function Footer() {
               height={20}
               className="filter invert"
             />
-            Github
+            <span className="hidden sm:inline">Github</span>
           </Link>
           <Link
             href="https://linkedin.com/in/matsjfunke"
@@ -34,7 +34,7 @@ export default function Footer() {
               height={20}
               className="filter invert"
             />
-            LinkedIn
+            <span className="hidden sm:inline">LinkedIn</span>
           </Link>
           <Link
             href="https://x.com/matsjfunke13"
@@ -47,14 +47,14 @@ export default function Footer() {
               height={20}
               className="filter invert"
             />
-            Twitter
+            <span className="hidden sm:inline">Twitter</span>
           </Link>
           <Link
             href="mailto:mats.funke@gmail.com"
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
           >
             <Mail size={20} />
-            Email
+            <span className="hidden sm:inline">Email</span>
           </Link>
         </div>
 
