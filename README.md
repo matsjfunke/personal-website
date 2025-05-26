@@ -1,8 +1,6 @@
 # Personal Website
 
-A place to share my notes / references, books general stuff i'm passionate about.
-
-**Tech Stack**:
+## Tech Stack:
 
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
@@ -19,6 +17,7 @@ A place to share my notes / references, books general stuff i'm passionate about
 - [Scripts](#scripts)
 - [Adding Dependencies](#adding-dependencies)
 - [Content Management](#content-management)
+- [Deployment](#deployment)
 
 ## Getting Started
 
@@ -123,5 +122,22 @@ Compendiums use [MDX Remote](https://github.com/hashicorp/next-mdx-remote) with 
 
 - Mathematical expressions via KaTeX
 - GitHub Flavored Markdown (tables, strikethrough, etc.)
-- Custom React component styling
+- Custom styling
 - Code syntax highlighting
+
+## Deployment
+
+This website is automatically deployed to a VPS using GitHub Actions whenever changes are pushed to the `main` branch.
+
+### Prerequisites
+
+**Configure VPS:**
+
+- Create a `non-root user` with sudo privileges [reference](https://matsjfunke.com/compendiums/hetzner)
+- Use the `deploy-setup.sh` script to configure Docker, Firewall, Git and project structure (or do it manually)
+
+**Configure these secrets in your GitHub repository settings:**
+
+- `VPS_HOST` - Your server IP address or domain
+- `VPS_USERNAME` - SSH username (typically `root`)
+- `VPS_SSH_KEY` - Private SSH key for server access
