@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { BookCard } from "@/components/BookCard";
 import { books } from "@/data/books";
 
@@ -26,13 +28,15 @@ export default function BooksPage() {
 
         <div className="mt-12 text-center">
           <p className="text-white/70 text-sm">
-            this page was inspired by{" "}
-            <a
+            this page was inspired by the{" "}
+            <Link
               href="https://www.tsolov.zip/about-me"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-white/80 transition-colors underline"
             >
-              the design goat
-            </a>
+              creative visionary
+            </Link>
           </p>
         </div>
       </div>

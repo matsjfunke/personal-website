@@ -13,6 +13,7 @@ export default function Footer() {
           <Link
             href="https://github.com/matsjfunke"
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            target="_blank"
           >
             <Image
               src="/footer/github.svg"
@@ -26,6 +27,7 @@ export default function Footer() {
           <Link
             href="https://linkedin.com/in/matsjfunke"
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            target="_blank"
           >
             <Image
               src="/footer/linkedin.svg"
@@ -39,10 +41,11 @@ export default function Footer() {
           <Link
             href="https://x.com/matsjfunke13"
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            target="_blank"
           >
             <Image
               src="/footer/x.svg"
-              alt="X (Twitter)"
+              alt="Twitter"
               width={20}
               height={20}
               className="filter invert"
@@ -52,6 +55,7 @@ export default function Footer() {
           <Link
             href="mailto:mats.funke@gmail.com"
             className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            target="_blank"
           >
             <Mail size={20} />
             <span className="hidden sm:inline">Email</span>

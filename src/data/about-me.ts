@@ -14,7 +14,7 @@ export const aboutMeItems: AboutMe[] = [
     image: "/about-me/coding.png",
   },
   {
-    text: "cuddling with men (bjj)",
+    text: "cuddling (bjj)",
     image: "/about-me/blue-belt.JPG",
   },
   {

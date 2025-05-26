@@ -212,6 +212,8 @@ export default async function CompendiumPage({ params }: Props) {
                 a: (props) => (
                   <a
                     className="text-blue-400 underline hover:text-blue-300 transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     {...props}
                   />
                 ),

@@ -52,7 +52,7 @@ export default async function CompendiumsPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Compendiums</h1>
           <p className="text-xl text-white/80">
-            A collection of concise comprehensive guides and references
+            A collection of my intuitions, concise guides & references
           </p>
         </div>
 
