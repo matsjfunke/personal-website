@@ -25,4 +25,7 @@ jobs:
           docker-compose down
           docker-compose build --no-cache
           docker-compose up -d
+          # Wait for containers to be healthy
+          sleep 10
+          docker-compose ps
           docker system prune -f 
