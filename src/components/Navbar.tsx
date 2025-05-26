@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { BookOpenText, Brain, House, StickyNote } from "lucide-react";
 
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const pathname = usePathname();
 
   // Enable global keyboard shortcuts
   useGlobalShortcuts();
@@ -62,14 +64,18 @@ const Navbar = () => {
           <div className="flex space-x-8">
             <Link
               href="/"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              className={`${
+                pathname === "/" ? "text-blue-400" : "text-gray-300"
+              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <House className="w-4 h-4" />
               <span className="hidden sm:inline">Home</span>
             </Link>
             <Link
               href="/compendiums"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              className={`${
+                pathname === "/compendiums" ? "text-blue-400" : "text-gray-300"
+              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <StickyNote className="w-4 h-4" />
               <span className="hidden sm:inline">Compendiums</span>
@@ -83,14 +89,18 @@ const Navbar = () => {
               </Link> */}
             <Link
               href="/books"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              className={`${
+                pathname === "/books" ? "text-blue-400" : "text-gray-300"
+              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <BookOpenText className="w-4 h-4" />
               <span className="hidden sm:inline">Books</span>
             </Link>
             <Link
               href="/thoughts"
-              className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+              className={`${
+                pathname === "/thoughts" ? "text-blue-400" : "text-gray-300"
+              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <Brain className="w-4 h-4" />
               <span className="hidden sm:inline">Thoughts</span>
