@@ -1,11 +1,12 @@
 import { books } from "./books";
 import { compendiums } from "./compendiums";
+import { thoughts } from "./thoughts";
 
 export interface SearchableItem {
   id: string;
   title: string;
   description: string;
-  type: "page" | "book" | "compendium";
+  type: "page" | "book" | "compendium" | "thought";
   url: string;
   keywords?: string[];
 }
@@ -74,7 +75,21 @@ export const searchableCompendiums: SearchableItem[] = compendiums.map(
   })
 );
 
+export const searchableThoughts: SearchableItem[] = thoughts.map((thought) => ({
+  id: `thought-${thought.slug}`,
+  title: thought.title,
+  description: thought.abstract,
+  type: "thought",
+  url: `/thoughts/${thought.slug}`,
+  keywords: ["blog", "thought", "opinion", thought.slug.replace(/-/g, " ")],
+}));
+
 // Get all searchable content
 export const getAllSearchableContent = (): SearchableItem[] => {
-  return [...pages, ...searchableBooks, ...searchableCompendiums];
+  return [
+    ...pages,
+    ...searchableBooks,
+    ...searchableCompendiums,
+    ...searchableThoughts,
+  ];
 };

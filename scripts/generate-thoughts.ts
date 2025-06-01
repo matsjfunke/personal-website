@@ -2,26 +2,26 @@ import { readFileSync, readdirSync, writeFileSync } from "fs";
 import matter from "gray-matter";
 import { join } from "path";
 
-interface CompendiumMeta {
+interface ThoughtMeta {
   title: string;
-  description: string;
+  abstract: string;
   date: string;
   author: string;
   slug: string;
 }
 
-export function generateCompendiums(): void {
-  const compendiumsPath = join(process.cwd(), "content/compendiums");
-  const outputPath = join(process.cwd(), "src/data/compendiums.ts");
+export function generateThoughts(): void {
+  const thoughtsPath = join(process.cwd(), "content/thoughts");
+  const outputPath = join(process.cwd(), "src/data/thoughts.ts");
 
   try {
-    const files = readdirSync(compendiumsPath);
+    const files = readdirSync(thoughtsPath);
 
-    const compendiums: CompendiumMeta[] = files
+    const thoughts: ThoughtMeta[] = files
       .filter((file) => file.endsWith(".mdx"))
       .map((file) => {
         const slug = file.replace(/\.mdx$/, "");
-        const filePath = join(compendiumsPath, file);
+        const filePath = join(thoughtsPath, file);
         const fileContents = readFileSync(filePath, "utf-8");
         const { data: frontmatter } = matter(fileContents);
 
@@ -31,9 +31,7 @@ export function generateCompendiums(): void {
             slug
               .replace(/-/g, " ")
               .replace(/\b\w/g, (l: string) => l.toUpperCase()),
-          description:
-            frontmatter.description ||
-            `A compendium about ${slug.replace(/-/g, " ")}.`,
+          abstract: frontmatter.abstract || "No abstract available.",
           date: frontmatter.date || new Date().toISOString().split("T")[0],
           author: frontmatter.author || "matsjfunke",
           slug,
@@ -42,24 +40,22 @@ export function generateCompendiums(): void {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     // Generate the TypeScript file content
-    const fileContent = `import { CompendiumMeta } from "@/types/compendium";
+    const fileContent = `import { ThoughtMeta } from "@/types/thought";
 
-export const compendiums: CompendiumMeta[] = ${JSON.stringify(compendiums, null, 2)};
+export const thoughts: ThoughtMeta[] = ${JSON.stringify(thoughts, null, 2)};
 `;
 
     // Write the file
     writeFileSync(outputPath, fileContent, "utf-8");
-    console.log(
-      `✅ Generated compendiums data with ${compendiums.length} entries`
-    );
+    console.log(`✅ Generated thoughts data with ${thoughts.length} entries`);
     console.log(`📝 Updated: ${outputPath}`);
   } catch (error) {
-    console.error("❌ Error generating compendiums:", error);
+    console.error("❌ Error generating thoughts:", error);
     process.exit(1);
   }
 }
 
 // Run the script if called directly
 if (require.main === module) {
-  generateCompendiums();
+  generateThoughts();
 }

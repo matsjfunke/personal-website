@@ -43,6 +43,8 @@ export function getTypeLabel(type: SearchableItem["type"]): string {
       return "Book";
     case "compendium":
       return "Compendium";
+    case "thought":
+      return "Thought";
     default:
       return "Page";
   }

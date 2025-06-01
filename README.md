@@ -92,6 +92,11 @@ This website uses a static data approach for content management, with all conten
   - Each compendium has: `title`, `description`, `date`, `author`, and `slug`
   - Actual content stored as MDX files in `content/compendiums` dir
 
+- **`thoughts.ts`** - Technical guides and references metadata
+
+  - Each compendium has: `title`, `abstract`, `date`, `author`, and `slug`
+  - Actual content stored as MDX files in `content/thoughts` dir
+
 - **`books.ts`** - Book recommendations with personal thoughts
 
   - Each book has: `title`, `image`, and `thoughts`
@@ -105,6 +110,13 @@ This website uses a static data approach for content management, with all conten
 
 1. Create MDX file in `content/compendiums/new-file.mdx`
 2. `compendiums.ts` is auto-generated via pre-commit hook running `pnpm generate:compendiums` (`tsx scripts/generate-compendiums.ts`)
+
+**New Thought:**
+
+same as compendium:
+
+1. Create MDX file in `content/thoughts/new-file.mdx`
+2. `src/data/thoughts.ts` is auto-generated via pre-commit hook running `pnpm generate:thoughts` (`tsx scripts/generate-compendiums.ts`)
 
 **New Book:**
 

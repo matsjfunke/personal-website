@@ -1,50 +1,9 @@
-import { readFile, readdir } from "fs/promises";
-import matter from "gray-matter";
 import { Command } from "lucide-react";
-import { join } from "path";
 
 import { ThoughtsTimeline } from "@/components/ThoughtsTimeline";
-import { ThoughtMeta } from "@/types/thought";
-
-async function getThoughts(): Promise<ThoughtMeta[]> {
-  try {
-    const thoughtsPath = join(process.cwd(), "content/thoughts");
-    const files = await readdir(thoughtsPath);
-
-    const thoughts = await Promise.all(
-      files
-        .filter((file) => file.endsWith(".mdx"))
-        .map(async (file) => {
-          const slug = file.replace(/\.mdx$/, "");
-          const filePath = join(thoughtsPath, file);
-          const fileContents = await readFile(filePath, "utf-8");
-
-          const { data: frontmatter } = matter(fileContents);
-
-          return {
-            title:
-              frontmatter.title ||
-              slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-            abstract: frontmatter.abstract || "No abstract available.",
-            date: frontmatter.date || new Date().toISOString().split("T")[0],
-            author: frontmatter.author || "Anonymous",
-            slug,
-          };
-        })
-    );
-
-    return thoughts.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-  } catch (error) {
-    console.error("Error reading thoughts:", error);
-    return [];
-  }
-}
+import { thoughts } from "@/data/thoughts";
 
 export default async function ThoughtsPage() {
-  const thoughts = await getThoughts();
-
   const timelineData = thoughts.map((thought) => ({
     date: thought.date,
     title: thought.title,
