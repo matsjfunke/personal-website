@@ -10,7 +10,7 @@ interface CompendiumMeta {
   slug: string;
 }
 
-function generateCompendiums(): void {
+export function generateCompendiums(): void {
   const compendiumsPath = join(process.cwd(), "content/compendiums");
   const outputPath = join(process.cwd(), "src/data/compendiums.ts");
 
@@ -63,5 +63,3 @@ export const compendiums: CompendiumMeta[] = ${JSON.stringify(compendiums, null,
 if (require.main === module) {
   generateCompendiums();
 }
-
-export { generateCompendiums };

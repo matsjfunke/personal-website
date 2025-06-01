@@ -1,35 +1,37 @@
-"use client";
+import { Command } from "lucide-react";
 
-import { Brain } from "lucide-react";
+import { ThoughtsTimeline } from "@/components/ThoughtsTimeline";
+import { thoughts } from "@/data/thoughts";
 
-export default function ThoughtsPage() {
+export default async function ThoughtsPage() {
+  const timelineData = thoughts.map((thought) => ({
+    date: thought.date,
+    title: thought.title,
+    abstract: thought.abstract,
+    slug: thought.slug,
+  }));
+
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-20">
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <div className="mb-8">
-            <Brain className="w-20 h-20 mx-auto mb-6 text-gray-400" />
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Thoughts</h1>
-            <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-              A collection of my thoughts on technology, life, and everything in
-              between.
-            </p>
-          </div>
+      {/* Header Section */}
+      <div className="max-w-7xl mx-auto pt-24 pb-12 px-4 md:px-8 lg:px-10">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-8xl font-bold mb-12">Thoughts</h1>
 
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-8 max-w-md">
-            <h2 className="text-2xl font-semibold mb-4">Coming Soon</h2>
-            <p className="text-white/70 mb-6">
-              something is cooking... stay tuned for updates!
+          <div className="mx-auto bg-gray-900/50 border border-white/20 rounded-lg p-8 space-y-4">
+            <p className="text-2xl text-white/80">
+              The following texts contain my thoughts, reflections & convictions
+              on software, technology and life.
             </p>
-            <div className="flex justify-center">
-              <div className="animate-pulse flex space-x-1">
-                <div className="w-2 h-2 bg-white/60 rounded-full"></div>
-                <div className="w-2 h-2 bg-white/40 rounded-full"></div>
-                <div className="w-2 h-2 bg-white/20 rounded-full"></div>
-              </div>
-            </div>
+            <p className="text-lg text-white/80">
+              Use <Command className="w-5 h-5 inline mb-1 mx-1" />K to search if
+              you are looking for something specific.
+            </p>
           </div>
         </div>
+      </div>
+      <div className="bg-black text-white">
+        <ThoughtsTimeline data={timelineData} />
       </div>
     </div>
   );
