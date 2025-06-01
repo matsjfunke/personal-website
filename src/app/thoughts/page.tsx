@@ -48,6 +48,7 @@ export default async function ThoughtsPage() {
     date: thought.date,
     title: thought.title,
     abstract: thought.abstract,
+    slug: thought.slug,
   }));
 
   return (
