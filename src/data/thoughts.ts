@@ -2,7 +2,7 @@ import { ThoughtMeta } from "@/types/thought";
 
 export const thoughts: ThoughtMeta[] = [
   {
-    "title": "There's nothing to invent",
+    "title": "Discovery over Invention",
     "abstract": "Are solutions invented or discovered?",
     "date": "2025-06-01",
     "author": "matsjfunke",
