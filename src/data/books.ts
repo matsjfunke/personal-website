@@ -17,7 +17,7 @@ export const books: Book[] = [
     title: "Shoe Dog",
     image: "/books/shoe-dog.webp",
     thoughts:
-      "The “you grow or you die“ mindset, a great story about perseverance taught through distance translated into business",
+      "The “you grow or you die“ mindset, a great story about how perseverance taught through distance running translated into business",
   },
   {
     title: "Build",
