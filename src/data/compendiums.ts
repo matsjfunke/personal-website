@@ -2,6 +2,13 @@ import { CompendiumMeta } from "@/types/compendium";
 
 export const compendiums: CompendiumMeta[] = [
   {
+    "title": "wer",
+    "description": "wer (german \"who\") is a CLI tool to find out: Who touched this last?!",
+    "date": "2025-06-15",
+    "author": "matsjfunke",
+    "slug": "wer"
+  },
+  {
     "title": "OAuth 2.0 Authorization Flow",
     "description": "Understanding the OAuth 2.0 authorization flow for secure third-party access to user resources",
     "date": "2025-03-06",
