@@ -30,7 +30,7 @@ services:
     container_name: personal-website
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.personal-website.rule=Host(`your-domain.com`)"
+      - "traefik.http.routers.personal-website.rule=Host(`matsjfunke.com`)"
       - "traefik.http.routers.personal-website.entrypoints=websecure"
       - "traefik.http.routers.personal-website.tls.certresolver=myresolver"
       - "traefik.http.services.personal-website.loadbalancer.server.port=3000"
