@@ -30,3 +30,14 @@ jobs:
             sleep 10
             docker-compose ps
             docker system prune -f
+
+      - name: Test website health
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://matsjfunke.com || echo "000")
+
+          if [ "$response" = "200" ]; then
+            echo "✅ Website is running successfully (HTTP 200)"
+          else
+            echo "❌ Website health check failed (HTTP $response)"
+            exit 1
+          fi
