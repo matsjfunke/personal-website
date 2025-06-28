@@ -138,7 +138,7 @@ export default async function ThoughtPage({ params }: Props) {
                 ),
                 p: (props) => (
                   <p
-                    className="text-white/90 leading-relaxed my-4 text-lg"
+                    className="text-white/90 leading-relaxed my-4 text-lg mb-6"
                     {...props}
                   />
                 ),
