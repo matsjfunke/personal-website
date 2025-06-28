@@ -2,6 +2,13 @@ import { CompendiumMeta } from "@/types/compendium";
 
 export const compendiums: CompendiumMeta[] = [
   {
+    "title": "SCIM 2.0 open standard",
+    "description": "The Protocol for automated user provisioning across apps, its specifications and implementation considerations at a glance.",
+    "date": "2025-06-28",
+    "author": "matsjfunke",
+    "slug": "scim"
+  },
+  {
     "title": "wer",
     "description": "wer (german \"who\") is a CLI tool to find out: Who touched this last?!",
     "date": "2025-06-15",
