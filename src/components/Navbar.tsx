@@ -66,7 +66,7 @@ const Navbar = () => {
               href="/"
               className={`${
                 pathname === "/" ? "text-blue-400" : "text-gray-300"
-              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
+              } hover:text-blue-400 transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <House className="w-4 h-4" />
               <span className="hidden sm:inline">Home</span>
@@ -75,14 +75,14 @@ const Navbar = () => {
               href="/compendiums"
               className={`${
                 pathname === "/compendiums" ? "text-blue-400" : "text-gray-300"
-              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
+              } hover:text-blue-400 transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <StickyNote className="w-4 h-4" />
               <span className="hidden sm:inline">Compendiums</span>
             </Link>
             {/* <Link
                 href="/projects"
-                className="text-gray-300 hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2"
+                className="text-gray-300 hover:text-blue-400 transition-colors text-sm font-medium flex items-center sm:space-x-2"
               >
                 <Wrench className="w-4 h-4" />
                 <span className="hidden sm:inline">Projects</span>
@@ -91,7 +91,7 @@ const Navbar = () => {
               href="/books"
               className={`${
                 pathname === "/books" ? "text-blue-400" : "text-gray-300"
-              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
+              } hover:text-blue-400 transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <BookOpenText className="w-4 h-4" />
               <span className="hidden sm:inline">Books</span>
@@ -100,7 +100,7 @@ const Navbar = () => {
               href="/thoughts"
               className={`${
                 pathname === "/thoughts" ? "text-blue-400" : "text-gray-300"
-              } hover:text-white transition-colors text-sm font-medium flex items-center sm:space-x-2`}
+              } hover:text-blue-400 transition-colors text-sm font-medium flex items-center sm:space-x-2`}
             >
               <Brain className="w-4 h-4" />
               <span className="hidden sm:inline">Thoughts</span>

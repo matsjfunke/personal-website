@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="flex justify-center space-x-8 mb-4">
           <Link
             href="https://github.com/matsjfunke"
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
             <Image
@@ -26,7 +26,7 @@ export default function Footer() {
           </Link>
           <Link
             href="https://linkedin.com/in/matsjfunke"
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
             <Image
@@ -40,7 +40,7 @@ export default function Footer() {
           </Link>
           <Link
             href="https://x.com/matsjfunke13"
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
             <Image
@@ -54,7 +54,7 @@ export default function Footer() {
           </Link>
           <Link
             href="mailto:mats.funke@gmail.com"
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-xl"
+            className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
             <Mail size={20} />
