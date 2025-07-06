@@ -51,6 +51,13 @@ export const compendiums: CompendiumMeta[] = [
     "slug": "tensors"
   },
   {
+    "title": "Sane SQL",
+    "description": "Everything actually needed to survive handling relational databases in the real-world",
+    "date": "2024-12-26",
+    "author": "matsjfunke",
+    "slug": "sql"
+  },
+  {
     "title": "How to configure firewalls for VPS security?",
     "description": "Guide to Setting Up Firewalls on Your Linux VPS",
     "date": "2024-12-25",

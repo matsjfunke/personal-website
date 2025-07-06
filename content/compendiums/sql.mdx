@@ -1,0 +1,357 @@
+---
+title: "Sane SQL"
+description: "Everything actually needed to survive handling relational databases in the real-world"
+author: "matsjfunke"
+date: "2024-12-26"
+---
+
+Starting out with a definition, relational databases are collections of tables which have columns and rows.
+Basically, supercharged Excel spreadsheets that link tables and columns together and enforce rules on what can be entered into each.
+
+> ACID: Atomicity, Consistency, Isolation, and Durability
+
+Let's start with ACID since everything else in relational databases builds on the promise that your data will be safe, consistent, and reliable—no matter what.
+A transaction is a bundle of operations (like transferring money from one account to another).
+
+`Atomicity` ensures that either all operations in the transaction succeed, or none do.
+
+`Consistency` means that after any transaction, the database must remain in a valid state, obeying all rules, constraints, and triggers.
+If a column is marked as “not null,” a transaction can't leave it empty.
+
+`Isolation` = no interference, multiple transactions can happen at the same time, but they shouldn't affect each other's outcome.
+It should appear as if each transaction happened one after another (serially), even if they're actually running in parallel.
+
+`Durability` ensures persistence once a transaction is committed, it's saved—permanently. Even if the system crashes right after, the results won't be lost.
+
+## Structuring Your Data
+
+> Keys are the backbone of relational databases—they create structure, enforce uniqueness, and link tables together.
+
+`Primary Keys` are the unique identifier for each row in a table. Think -> social security number of your data.
+Every table should have exactly one primary key, and it can never be null or duplicated once assigned it should never be changed!
+
+You can use simple integers, but [UUIDs (Universally Unique Identifiers)](https://en.wikipedia.org/wiki/Universally_unique_identifier) are best practice because they guarantee global uniqueness.
+
+```sql
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL,
+    username VARCHAR(50) NOT NULL
+);
+```
+
+`Normalization` is the process of organizing data to reduce redundancy and improve data integrity.
+Think of normalization as "one fact, one place."
+Normalization is the process of organizing database tables so that each piece of data is stored only once, dependencies are clear, and every column contains only information directly related to the table's primary key.
+The goal isn't to normalize to the highest level possible, but to find the right balance between data integrity and query performance.
+
+Sometimes denormalization (intentionally breaking normalization rules) is necessary for performance.
+
+`Column Types` are used to control what kind of data can stored in a column, keeping your data accurate and your queries efficient.
+Always use `ENUM`s when a column should only allow a limited set of predefined values, such as user roles, status types, or categories.
+
+```sql
+CREATE TYPE user_role AS ENUM ('admin', 'member', 'guest');
+
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),   -- Unique ID
+    email VARCHAR(255) NOT NULL,                          -- Email address
+    role user_role NOT NULL DEFAULT 'member',             -- Role with ENUM type
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Signup date/time
+    is_active BOOLEAN DEFAULT TRUE,                        -- Active account flag
+    -- Other constraints, such as unique or CHECK constraints, and default values are crucial for data integrity
+    age INTEGER CHECK (age >= 0), -- No negative ages!
+    username VARCHAR(50) NOT NULL UNIQUE, -- No duplicate usernames
+    -- ...
+```
+
+## Relationships
+
+So far, we've looked at how to define what goes into a single table. But the real power of relational databases comes from how tables connect to each other.
+
+`Foreign Keys` are columns that reference the primary key of another table they glue your data together.
+A foreign key creates a link between two tables and enforces referential integrity.
+
+```sql
+CREATE TABLE orders (
+    order_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID,
+    order_date DATE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE -- If a user is deleted, all their orders are deleted
+);
+```
+
+The foreign key constraint means you can't create an order for a user that doesn't exist in the users table or
+if you try to delete a user who has orders, the database will stop you but if a user is deleted, all their orders are deleted automatically (handled by ON DELETE CASCADE).
+
+`Composite Keys` happen when you need multiple columns to uniquely identify a row, used in tables that represent many-to-many relationships.
+
+```sql
+CREATE TABLE user_roles (
+    user_id UUID,
+    role_id UUID,
+    assigned_date DATE,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+```
+
+This is why relational databases are "relational" the relationships between tables are enforced at the database level.
+That's what makes them robust: even if your application logic has flaws, the database itself will catch many errors.
+
+- Delete a user? The database checks if they have orders first.
+- Try to create an order for user_id 999 when that user doesn't exist? Rejected.
+
+## Querying
+
+To extract data from a database, you need to write a query.
+
+```sql
+SELECT * FROM users WHERE email = 'user@example.com';
+```
+
+This query will return all rows from the users table where the email column matches 'user@example.com'.
+
+`JOIN`s combine data from multiple tables based on relationships between them (ON `foreign key` = `primary key`).
+The most common type is `INNER JOIN`, which returns only rows that have matching values in both tables.
+
+```sql
+-- Get all orders with user information
+SELECT orders.order_id, users.email, orders.order_date
+FROM orders
+INNER JOIN users ON orders.user_id = users.user_id;
+LIMIT 10; -- you should always use LIMIT to prevent queries from taking too long
+```
+
+Other join types:
+
+- `LEFT JOIN` - Returns all rows from the left table, even if no match in right table
+- `RIGHT JOIN` - Returns all rows from the right table, even if no match in left table
+- `FULL JOIN` - Returns all rows from both tables, with NULLs where no match exists
+
+## Transactions
+
+A transaction is a way to group several operations into a single, all-or-nothing unit. If any step fails, the whole transaction is rolled back and the database stays unchanged.
+Use transactions whenever you need to ensure data stays consistent across multiple related changes.
+
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE user_id = 2;
+COMMIT;
+
+-- If something goes wrong, you can cancel everything with:
+ROLLBACK;
+```
+
+## Performance
+
+_Query operations are the most common operations in a database but they can get really slow._
+
+Namely when a full table scan occurs aka, the database has to look at every single row in a table to find the data you're looking for.
+This has to be prevented at all costs as it requires loading every row from disk into memory, making queries exponentially slower as your table grows.
+
+`Indexing` is like creating a table of contents for your database.
+Without an index, finding a specific row requires a full table scan, imagine looking for a specific page in a book by reading every page from the beginning.
+
+An index is a separate data structure that stores a subset of your table's data in a way that makes searching much faster.
+Think of it as a sorted list of values with pointers to the actual rows.
+
+#### When to Create Indexes:
+
+```sql
+-- Primary & Foreign Keys are automatically indexed in most databases, you don't need to create indexes for them.
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY,  -- Indexed automatically
+    email VARCHAR(255) UNIQUE  -- Indexed automatically
+);
+
+-- Frequently searched columns are columns used in WHERE clauses
+-- Index columns you search by often
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_orders_status ON orders(status);
+-- Only index active users
+CREATE INDEX idx_active_users_email ON users(email) WHERE is_active = TRUE;
+
+-- Columns used in JOINs are foreign keys and columns used to link tables
+-- Already indexed as foreign key, but explicit for clarity
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+
+-- Columns used for sorting are ORDER BY and GROUP BY columns
+-- Index for efficient sorting
+CREATE INDEX idx_orders_date ON orders(order_date DESC);
+
+-- Composite indexes are multiple columns frequently used together
+-- Optimize queries that filter by both user and date
+CREATE INDEX idx_orders_user_date ON orders(user_id, order_date);
+```
+
+#### When NOT to Create Indexes:
+
+- **Small tables** (< 1000 rows) - Index overhead isn't worth it
+- **Rarely queried columns** - Indexes have maintenance costs
+- **Columns with low selectivity** - Boolean flags, status with few values
+- **Frequently updated columns** - Indexes slow down INSERT/UPDATE operations
+- **Text columns used with LIKE '%pattern%'** - Can't use regular indexes effectively
+
+#### Index Best Practices:
+
+1. **Start with the obvious** - Primary keys, foreign keys, unique constraints
+2. **Profile your queries** - Use `EXPLAIN` to see which indexes are being used
+3. **Consider query patterns** - Index columns that appear in WHERE, JOIN, ORDER BY
+4. **Monitor performance** - Too many indexes slow down writes
+5. **Use partial indexes** - Index only rows that meet certain conditions
+
+## Migrations
+
+Working in the real-world means changing structures, adding new /removing old columns / tables.
+
+To handle this you can use migrations, which are scripts that automatically update the database schema to match your application's current state.
+For this you want to use ORMs which allow you to track your migrations with version control and reapply them in the correct order.
+
+## Security Basics
+
+You connect to a database with a username and password. Which means you can have multiple `users with different permissions`.
+
+I would suggest:
+
+- one user which can `SELECT`, `INSERT`, `UPDATE`, `DELETE` on the tables it needs
+- one read only user which can only read the tables it needs
+- and one which can `CREATE`, `DROP`, or `ALTER` tables
+
+For true production using a VPN only allowing access to the database from certain IP addresses is also a good idea.
+
+Real-world survival means planning for failure, meaning regular backups (and test restores!) are mandatory for production environments.
+For SQLite this is easy as it's just a file, for PostgreSQL this is more complex and your best bet is probably to use a managed database -> paying for to pass the responsibility to someone else.
+Note you can backup your database with `pg_dump` and restore it with `pg_restore` but the hassle and stress often outweigh the cost of managed services.
+
+One of the most common security vulnerabilities is SQL injection, which is a type of attack where an attacker injects malicious SQL code into a query.
+To prevent this you can use ORMs.
+
+## ORMs (Object-Relational Mappers)
+
+ORMs abstract sql syntax and provide a abstraction layer on top of it, which improves ease of use and prevents sql injections.
+They allow your to use your applications programming language to interact with the database, instead of writing raw sql.
+Popular examples include Prisma, Drizzle (TypeScript), SQLAlchemy, Alembic (Python). You should always use an ORM in the real-world.
+
+```python
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+```
+
+```typescript
+export const getUserByUsername = async (username: string) => {
+  const user = await prisma.user.findUnique({
+    where: { username: username },
+  });
+  return user;
+};
+```
+
+Downside being that the abstraction costs performance and meaning complex queries can take a while to execute.
+
+As said earlier migrations should be handled with an ORM they take care of ordering and applying the migrations in the correct order
+(first the User table has to be created a column can be added).
+
+```sql
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN "role" ENUM('user', 'admin') NOT NULL DEFAULT 'user';
+```
+
+## RDBMS (Relational Database Management System)
+
+RDBMS are implementations of the above described concepts.
+
+### SQLite
+
+Is lightweight (5MB) database that saves data to a single file. Making it great for on device applications (mobile, desktop, etc.).
+
+State management is easy as its just a file, it doesn't need a dedicated server running a process you can just throw it in blob storage and you're good to go,
+since it's just a file it's also easy & cheap to backup.
+
+Contray to popular belief it also masters concurrency, using WAL (Write-Ahead Logging) it can handle multiple writers and readers just fine.
+When inserting data (writing) it uses a log file meaning while a writer is writing, readers can read the data.
+Activate it with
+
+```sql
+PRAGMA journal_mode = WAL;
+```
+
+SQLite also enables on device RAG pipelines, with the [sqlite-vec](https://github.com/asg017/sqlite-vec) an extremely small, vector search SQLite extension that runs anywhere!
+
+```sql
+create virtual table vec_examples using vec0(
+  sample_embedding float[8]
+);
+
+-- vectors can be provided as JSON or in a compact binary format
+insert into vec_examples(rowid, sample_embedding)
+  values
+    (1, '[-0.200, 0.250, 0.341, -0.211, 0.645, 0.935, -0.316, -0.924]'),
+    (2, '[0.443, -0.501, 0.355, -0.771, 0.707, -0.708, -0.185, 0.362]'),
+    (3, '[0.716, -0.927, 0.134, 0.052, -0.669, 0.793, -0.634, -0.162]'),
+    (4, '[-0.710, 0.330, 0.656, 0.041, -0.990, 0.726, 0.385, -0.958]');
+
+
+-- KNN style query
+select
+  rowid,
+  distance
+from vec_examples
+where sample_embedding match '[0.890, 0.544, 0.825, 0.961, 0.358, 0.0196, 0.521, 0.175]'
+order by distance
+limit 2;
+/*
+┌───────┬──────────────────┐
+│ rowid │     distance     │
+├───────┼──────────────────┤
+│ 2     │ 2.38687372207642 │
+│ 1     │ 2.38978505134583 │
+└───────┴──────────────────┘
+*/
+```
+
+### PostgreSQL
+
+When SQLite reaches its limits (thousands of concurrent connections, or roughly 1 TB and 10 TB of data), PostgreSQL comes into play.
+
+> It is the most feature-rich open-source RDBMS, and the go-to choice for production applications.
+
+It excels at:
+
+- **Advanced data types** - JSON, arrays, geometric data, custom types
+- **Concurrent performance** - Handles multiple users and complex queries efficiently
+- **Extensibility** - Custom functions, operators, and procedural languages
+
+## Practical SQL Tips
+
+I want to end this with the must knows to always keep in mind.
+
+1. **Always** test destructive queries (DELETE/UPDATE) with a SELECT first.
+
+```sql
+-- Example of a parameterized query
+SELECT * FROM users WHERE email = 'user@example.com';
+-- Then you can delete it
+DELETE FROM users WHERE email = 'user@example.com';
+```
+
+2. **Always** use a ORM.
+
+3. Use **as granular permissions as possible**, don't give a user access to the entire database, only the tables and columns they need.
+
+4. **Always** index your database, find the most used columns with `EXPLAIN ANALYZE` and add indexes to them.
+
+```sql
+-- This might show a full table scan if username isn't indexed
+EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'john_doe';
+
+-- After adding an index, the same query should be much faster
+CREATE INDEX idx_users_username ON users(username);
+EXPLAIN ANALYZE SELECT * FROM users WHERE username = 'john_doe';
+```
+
+5. **Normalize your data**, don't repeat yourself there can only be a single source of truth.
+
+6. **Always** use transactions, they ensure data consistency and prevent partial updates.

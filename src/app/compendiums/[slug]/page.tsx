@@ -172,10 +172,10 @@ export default async function CompendiumPage({ params }: Props) {
                   <em className="text-white/90 italic" {...props} />
                 ),
                 ul: (props) => (
-                  <ul className="space-y-2 my-4 pl-6" {...props} />
+                  <ul className="space-y-2 my-4 pl-6 list-disc" {...props} />
                 ),
                 ol: (props) => (
-                  <ol className="space-y-2 my-4 pl-6" {...props} />
+                  <ol className="space-y-2 my-4 pl-6 list-decimal" {...props} />
                 ),
                 li: (props) => <li className="text-white/90" {...props} />,
                 blockquote: (props) => (
