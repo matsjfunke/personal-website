@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
 import { join } from "path";
@@ -42,6 +44,28 @@ async function getCompendiums(): Promise<CompendiumMeta[]> {
     return [];
   }
 }
+
+export const metadata: Metadata = {
+  title: "Compendiums - Technical Guides & References",
+  description:
+    "Technical guides, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
+  keywords: [
+    "technical guides",
+    "software development",
+    "programming tutorials",
+    "AI tutorials",
+    "machine learning guides",
+    "technical references",
+    "coding guides",
+    "development resources",
+  ],
+  openGraph: {
+    title: "Compendiums - Technical Guides & References",
+    description:
+      "Technical guides, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
+    url: "https://matsjfunke.com/compendiums",
+  },
+};
 
 export default async function CompendiumsPage() {
   const compendiums = await getCompendiums();

@@ -1,7 +1,33 @@
+import type { Metadata } from "next";
+
 import { Command } from "lucide-react";
 
 import { ThoughtsTimeline } from "@/components/ThoughtsTimeline";
 import { thoughts } from "@/data/thoughts";
+
+export const metadata: Metadata = {
+  title: "Thoughts - Reflections on Software, Technology & Life",
+  description:
+    "Personal thoughts and reflections on software development, artificial intelligence, technology trends, and life experiences. Explore insights on programming, AI, and the intersection of technology and human experience.",
+  keywords: [
+    "software development thoughts",
+    "technology reflections",
+    "AI insights",
+    "programming philosophy",
+    "tech blog",
+    "software engineering thoughts",
+    "artificial intelligence reflections",
+    "technology trends",
+    "programming insights",
+    "tech philosophy",
+  ],
+  openGraph: {
+    title: "Thoughts - Reflections on Software, Technology & Life",
+    description:
+      "Personal reflections on life and technological development, AI trends, and the intersection of technology and human experience.",
+    url: "https://matsjfunke.com/thoughts",
+  },
+};
 
 export default async function ThoughtsPage() {
   const timelineData = thoughts.map((thought) => ({

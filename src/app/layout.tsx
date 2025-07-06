@@ -5,6 +5,7 @@ import "katex/dist/katex.min.css";
 
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
     "Computer Vision",
     "Natural Language Processing",
     "Compendiums",
+    "Technical Guides",
     "Books",
   ],
   authors: [{ name: "Mats J Funke" }],
@@ -56,14 +58,14 @@ export const metadata: Metadata = {
     url: "https://matsjfunke.com",
     title: "Mats J Funke",
     description:
-      "Personal website of Mats J Funke, sharing thoughts on software engineering, AI, and life.",
+      "Personal website of Mats J Funke, a software engineer, sharing thoughts on technology, life and AI.",
     siteName: "Mats J Funke",
   },
   twitter: {
     card: "summary",
     title: "Mats J Funke",
     description:
-      "Personal website of Mats J Funke, sharing thoughts on software engineering, AI, and life.",
+      "Personal website of Mats J Funke, a software engineer, sharing thoughts on technology, life and AI.",
     creator: "@matsjfunke13",
   },
   robots: {
@@ -87,9 +89,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.className}>
       <body>
-        <Navbar />
-        {children}
-        <Footer />
+        <TooltipProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </TooltipProvider>
       </body>
     </html>
   );

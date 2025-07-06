@@ -1,9 +1,32 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BookCard } from "@/components/BookCard";
 import { books } from "@/data/books";
+
+export const metadata: Metadata = {
+  title: "Books - Recommended Reading List",
+  description:
+    "A curated collection of books that I have deeply enjoyed and that have significantly shaped my perspectives and thinking over time.",
+  keywords: [
+    "book recommendations",
+    "reading list",
+    "business books",
+    "technology books",
+    "software engineering books",
+    "AI books",
+    "entrepreneurship books",
+    "personal development books",
+    "tech reading list",
+    "programming books",
+  ],
+  openGraph: {
+    title: "Books - Recommended Reading List",
+    description:
+      "A curated collection of books that I have deeply enjoyed and that have significantly shaped my perspectives and thinking over time.",
+    url: "https://matsjfunke.com/books",
+  },
+};
 
 export default function BooksPage() {
   return (
