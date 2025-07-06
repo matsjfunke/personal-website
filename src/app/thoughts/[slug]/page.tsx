@@ -81,6 +81,11 @@ export default async function ThoughtPage({ params }: Props) {
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">
               {thought.title}
             </h1>
+            {thought.frontmatter.abstract && (
+              <p className="text-lg text-white/60 mb-4">
+                {thought.frontmatter.abstract}
+              </p>
+            )}
             {(thought.frontmatter.author || thought.frontmatter.date) && (
               <div className="flex justify-between items-center text-lg text-white/60 mt-4">
                 {thought.frontmatter.author && (
@@ -172,10 +177,10 @@ export default async function ThoughtPage({ params }: Props) {
                   <em className="text-white/90 italic" {...props} />
                 ),
                 ul: (props) => (
-                  <ul className="space-y-2 my-4 pl-6" {...props} />
+                  <ul className="space-y-2 my-4 pl-6 list-disc" {...props} />
                 ),
                 ol: (props) => (
-                  <ol className="space-y-2 my-4 pl-6" {...props} />
+                  <ol className="space-y-2 my-4 pl-6 list-decimal" {...props} />
                 ),
                 li: (props) => (
                   <li className="text-white/90 text-lg" {...props} />

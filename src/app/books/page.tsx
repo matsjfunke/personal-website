@@ -11,12 +11,14 @@ export default function BooksPage() {
       <div className="container mx-auto px-4 py-20">
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mt-10 mb-4">
-            Some of my dearest reads
+            Some of my favorite reads
           </h1>
           <p className="text-white/80 text-lg max-w-2xl">
-            These are some of the books which have shaped my thinking and what
-            they taught me. I&apos;m always happy to recommend great reads or
-            receive recommendations— feel free to reach out 🤓
+            These are some of the books which have shaped my thinking, find
+            their covers and what they taught me below.
+            <br />
+            I&apos;m always happy to recommend great reads or receive
+            recommendations— feel free to reach out 🤓
           </p>
         </div>
 

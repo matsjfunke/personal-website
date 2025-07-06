@@ -81,6 +81,11 @@ export default async function CompendiumPage({ params }: Props) {
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">
               {compendium.title}
             </h1>
+            {compendium.frontmatter.description && (
+              <p className="text-lg text-white/60 mb-4">
+                {compendium.frontmatter.description}
+              </p>
+            )}
             {(compendium.frontmatter.author || compendium.frontmatter.date) && (
               <div className="flex justify-between items-center text-lg text-white/60 mt-4">
                 {compendium.frontmatter.author && (
