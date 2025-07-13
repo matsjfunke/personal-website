@@ -48,9 +48,9 @@ services:
       - "traefik.http.middlewares.mcp-addprefix.addprefix.prefix=/api/mcp"
 
       # Add CORS headers for MCP API
-      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS,DELETE"
-      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowheaders=Content-Type,Authorization,mcp-session-id"
-      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolalloworigin=*"
+      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowMethods=GET,POST,OPTIONS,DELETE"
+      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowHeaders=Content-Type,Authorization,mcp-session-id"
+      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowOrigin=*"
 
       # Chain middlewares: strip /mcp, add /api/mcp, then CORS
       - "traefik.http.routers.mcp.middlewares=mcp-stripprefix,mcp-addprefix,mcp-cors"
