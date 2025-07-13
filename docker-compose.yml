@@ -5,14 +5,16 @@ services:
     image: traefik:v3.0
     container_name: traefik
     command:
-      - "--api.insecure=false"
-      - "--providers.docker=true"
+      - "--api.insecure=false" # Disable insecure API dashboard for production security
+      - "--providers.docker=true" # Auto-discover services via Docker labels
+      # Only expose services that explicitly set traefik.enable=true (security best practice)
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=mats.funke@gmail.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80" # HTTP entypoint redirects to HTTPS
+      - "--entrypoints.websecure.address=:443" # HTTPS entypoint
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true" # Automatic SSL certificate generation via Let's Encrypt TLS challenge
+      - "--certificatesresolvers.myresolver.acme.email=mats.funke@gmail.com" # Email required for Let's Encrypt certificate notifications and recovery
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json" # SSL certificates persist across container restarts
+      # Force HTTP to HTTPS redirect for security (all traffic must be encrypted)
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
@@ -20,7 +22,7 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_letsencrypt:/letsencrypt
+      - traefik_letsencrypt:/letsencrypt # SSL certificates persist across container restarts
     networks:
       - web
     restart: unless-stopped
@@ -31,26 +33,32 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Main website route
+      # Define service first to avoid Traefik auto-generating conflicting services
+      # Both routers will reference this single service definition
+      - "traefik.http.services.personal-website.loadbalancer.server.port=3000"
+
+      # Main website route - serves the primary domain
       - "traefik.http.routers.personal-website.rule=Host(`matsjfunke.com`)"
       - "traefik.http.routers.personal-website.entrypoints=websecure"
       - "traefik.http.routers.personal-website.tls.certresolver=myresolver"
-      - "traefik.http.services.personal-website.loadbalancer.server.port=3000"
+      # Explicitly link to service to prevent Traefik confusion with multiple routers
+      - "traefik.http.routers.personal-website.service=personal-website"
 
-        # MCP server route - dedicated subdomain with path transformation
+      # MCP server route - dedicated subdomain for API access
       - "traefik.http.routers.mcp.rule=Host(`mcp.matsjfunke.com`) && PathPrefix(`/mcp`)"
       - "traefik.http.routers.mcp.entrypoints=websecure"
       - "traefik.http.routers.mcp.tls.certresolver=myresolver"
-      - "traefik.http.services.mcp.loadbalancer.server.port=3000"
+      # Both routers point to same service since it's the same Next.js container
+      - "traefik.http.routers.mcp.service=personal-website"
 
       # Transform /mcp to /api/mcp for Next.js routing
       - "traefik.http.middlewares.mcp-stripprefix.stripprefix.prefixes=/mcp"
       - "traefik.http.middlewares.mcp-addprefix.addprefix.prefix=/api/mcp"
 
-      # Add CORS headers for MCP API
-      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowMethods=GET,POST,OPTIONS,DELETE"
-      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowHeaders=Content-Type,Authorization,mcp-session-id"
-      - "traefik.http.middlewares.mcp-cors.headers.accessControlAllowOrigin=*"
+      # CORS headers required for MCP protocol compatibility with AI clients
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS,DELETE"
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowheaders=Content-Type,Authorization,mcp-session-id"
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolalloworiginlist=*"
 
       # Chain middlewares: strip /mcp, add /api/mcp, then CORS
       - "traefik.http.routers.mcp.middlewares=mcp-stripprefix,mcp-addprefix,mcp-cors"
@@ -62,8 +70,10 @@ services:
       - traefik
 
 volumes:
+  # Named volume for Let's Encrypt certificates persistence across container restarts
   traefik_letsencrypt:
 
 networks:
+  # Internal network for container communication (external=false for security)
   web:
     external: false
