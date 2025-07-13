@@ -13,6 +13,7 @@
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
+- [MCP Server](#mcp-server)
 - [Development Guidelines](#development-guidelines)
 - [Scripts](#scripts)
 - [Adding Dependencies](#adding-dependencies)
@@ -36,6 +37,89 @@ pnpm d
 Once the development server is running, you can access the application at:
 
 - **Website**: Open [http://localhost:3000](http://localhost:3000) to view the site
+- **MCP Server**: Available at [http://localhost:3000/api/mcp](http://localhost:3000/api/mcp) for AI clients
+
+## MCP Server
+
+This website includes a **Model Context Protocol (MCP)** server that provides structured access to content for AI clients. The server uses JSON-RPC over HTTP and implements the MCP specification.
+
+### Features
+
+- **Resources** - Like GET endpoints, they provide data without side effects
+- **Tools** - Like POST endpoints, they perform actions and can have side effects
+- **Prompts** - Reusable templates for LLM interactions
+- **Sampling** - Ability to request LLM completions from connected clients
+
+### Available Resources
+
+- `compendiums://all` - Returns all technical compendiums with metadata
+- `thoughts://all` - Returns all thoughts and blog posts with metadata
+- `books://all` - Returns all book recommendations with metadata
+
+### Available Tools
+
+- `search_content(query)` - Search across all content types and return full MDX content
+
+### Usage
+
+**Test with curl:**
+
+```bash
+# Initialize MCP connection
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}, "id": 1}'
+
+# List available resources
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "resources/list", "params": {}, "id": 2}'
+
+# Read all compendiums metadata
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "resources/read", "params": {"uri": "compendiums://all"}, "id": 3}'
+
+# List available tools
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 4}'
+
+# Search for content (returns full MDX)
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "search_content", "arguments": {"query": "rust"}}, "id": 5}'
+```
+
+**Connect with MCP clients:**
+
+- [MCP Inspector](https://inspector.modelcontextprotocol.io/) - Web-based testing tool
+- Claude Desktop with MCP configuration
+- Any MCP-compatible AI client
+
+### Implementation
+
+The MCP server is implemented as a Next.js API route (`/src/app/api/mcp/route.ts`) using manual JSON-RPC handling for simplicity and reliability. This approach provides:
+
+- ✅ **Framework compatibility** - Works perfectly with Next.js
+- ✅ **Stateless operation** - Fits serverless deployment models
+- ✅ **Simple debugging** - Clear, readable JSON-RPC implementation
+- ✅ **High performance** - Direct HTTP handling without abstraction layers
+
+### Architecture
+
+**Resources** (3 collection resources):
+
+- Browse content metadata for discovery
+- `compendiums://all`, `thoughts://all`, `books://all`
+
+**Tools** (1 search tool):
+
+- `search_content(query)` - Returns full MDX content from matching items
+- Searches across all content types (compendiums, thoughts, books, pages)
+- Provides complete content, not just metadata
+
+This hybrid approach gives AI clients the best of both worlds: efficient browsing AND full content access through search.
 
 ## Development Guidelines
 

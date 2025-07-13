@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   traefik:
@@ -30,10 +30,31 @@ services:
     container_name: personal-website
     labels:
       - "traefik.enable=true"
+
+      # Main website route
       - "traefik.http.routers.personal-website.rule=Host(`matsjfunke.com`)"
       - "traefik.http.routers.personal-website.entrypoints=websecure"
       - "traefik.http.routers.personal-website.tls.certresolver=myresolver"
       - "traefik.http.services.personal-website.loadbalancer.server.port=3000"
+
+        # MCP server route - dedicated subdomain with path transformation
+      - "traefik.http.routers.mcp.rule=Host(`mcp.matsjfunke.com`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp.entrypoints=websecure"
+      - "traefik.http.routers.mcp.tls.certresolver=myresolver"
+      - "traefik.http.services.mcp.loadbalancer.server.port=3000"
+
+      # Transform /mcp to /api/mcp for Next.js routing
+      - "traefik.http.middlewares.mcp-stripprefix.stripprefix.prefixes=/mcp"
+      - "traefik.http.middlewares.mcp-addprefix.addprefix.prefix=/api/mcp"
+
+      # Add CORS headers for MCP API
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS,DELETE"
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolallowheaders=Content-Type,Authorization,mcp-session-id"
+      - "traefik.http.middlewares.mcp-cors.headers.accesscontrolalloworigin=*"
+
+      # Chain middlewares: strip /mcp, add /api/mcp, then CORS
+      - "traefik.http.routers.mcp.middlewares=mcp-stripprefix,mcp-addprefix,mcp-cors"
+
     networks:
       - web
     restart: unless-stopped
@@ -45,4 +66,4 @@ volumes:
 
 networks:
   web:
-    external: false 
+    external: false

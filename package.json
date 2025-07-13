@@ -14,11 +14,13 @@
     "commitlint": "commitlint --edit",
     "prepare": "husky",
     "generate:compendiums": "tsx scripts/generate-compendiums.ts",
-    "generate:thoughts": "tsx scripts/generate-thoughts.ts"
+    "generate:thoughts": "tsx scripts/generate-thoughts.ts",
+    "inspect:mcp": "pnpx @modelcontextprotocol/inspector"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
+    "@modelcontextprotocol/sdk": "^1.15.1",
     "@next/mdx": "^15.1.8",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-slot": "^1.2.3",
