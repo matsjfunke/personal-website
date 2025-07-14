@@ -222,6 +222,27 @@ I would suggest:
 
 For true production using a VPN only allowing access to the database from certain IP addresses is also a good idea.
 
+`Row-Level Security (RLS)` controls which rows users can see and modify within a table, beyond just table-level permissions.
+This is crucial for multi-tenant applications or when users should only access their own data.
+
+```sql
+-- Enable RLS on a table
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Create a policy that users can only see their own orders
+CREATE POLICY orders_access_policy ON orders
+    FOR ALL TO authenticated_user
+    USING (
+        user_id = current_user_id() OR
+        current_user_role() = 'manager'
+    );
+
+-- Now a query like this will only return orders for the current user
+SELECT * FROM orders WHERE user_id = current_user_id();
+```
+
+RLS is enforced at the database level, meaning even if your application logic has bugs, users can't access data they shouldn't see.
+
 Real-world survival means planning for failure, meaning regular backups (and test restores!) are mandatory for production environments.
 For SQLite this is easy as it's just a file, for PostgreSQL this is more complex and your best bet is probably to use a managed database -> paying for to pass the responsibility to someone else.
 Note you can backup your database with `pg_dump` and restore it with `pg_restore` but the hassle and stress often outweigh the cost of managed services.
