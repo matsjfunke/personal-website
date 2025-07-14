@@ -45,7 +45,9 @@ export async function POST(req: NextRequest) {
       req.headers.get("X-API-Key") ||
       req.headers.get("Authorization")?.replace("Bearer ", "");
 
-    if (!apiKey || apiKey !== "password") {
+    const expectedApiKey = process.env.MCP_API_KEY || "password";
+
+    if (!apiKey || apiKey !== expectedApiKey) {
       return NextResponse.json(
         {
           jsonrpc: "2.0",

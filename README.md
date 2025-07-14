@@ -41,24 +41,23 @@ Once the development server is running, you can access the application at:
 
 ## MCP Server
 
-This website includes a **Model Context Protocol (MCP)** server that provides structured access to content for AI clients. The server uses JSON-RPC over HTTP and implements the MCP specification.
+This website includes a **Model Context Protocol (MCP)** server that provides structured access to content for AI clients. The server uses JSON-RPC over HTTP and implements the MCP specification with API key authentication.
 
-### Features
-
-- **Resources** - Like GET endpoints, they provide data without side effects
-- **Tools** - Like POST endpoints, they perform actions and can have side effects
-- **Prompts** - Reusable templates for LLM interactions
-- **Sampling** - Ability to request LLM completions from connected clients
-
-### Available Resources
+#### Available Resources
 
 - `compendiums://all` - Returns all technical compendiums with metadata
 - `thoughts://all` - Returns all thoughts and blog posts with metadata
 - `books://all` - Returns all book recommendations with metadata
 
-### Available Tools
+#### Available Tools
 
 - `search_content(query)` - Search across all content types and return full MDX content
+
+#### Authentication
+
+The MCP server requires API key authentication for all requests. Include the API key in the `X-API-Key` header or as a `Bearer` token in the `Authorization` header.
+
+**Default API Key:** `password` (⚠️ **Change this in production!**)
 
 ### Usage
 
@@ -66,36 +65,72 @@ This website includes a **Model Context Protocol (MCP)** server that provides st
 
 ```bash
 # Initialize MCP connection
-curl -X POST http://localhost:3000/api/mcp \
+curl -X POST http://localhost:3002/api/mcp \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: password" \
   -d '{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}, "id": 1}'
 
 # List available resources
-curl -X POST http://localhost:3000/api/mcp \
+curl -X POST http://localhost:3002/api/mcp \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: password" \
   -d '{"jsonrpc": "2.0", "method": "resources/list", "params": {}, "id": 2}'
 
 # Read all compendiums metadata
-curl -X POST http://localhost:3000/api/mcp \
+curl -X POST http://localhost:3002/api/mcp \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: password" \
   -d '{"jsonrpc": "2.0", "method": "resources/read", "params": {"uri": "compendiums://all"}, "id": 3}'
 
 # List available tools
-curl -X POST http://localhost:3000/api/mcp \
+curl -X POST http://localhost:3002/api/mcp \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: password" \
   -d '{"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 4}'
 
 # Search for content (returns full MDX)
-curl -X POST http://localhost:3000/api/mcp \
+curl -X POST http://localhost:3002/api/mcp \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: password" \
   -d '{"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "search_content", "arguments": {"query": "rust"}}, "id": 5}'
+
+# Alternative: Using Authorization header
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer password" \
+  -d '{"jsonrpc": "2.0", "method": "ping", "id": 1}'
 ```
 
 **Connect with MCP clients:**
 
 - [MCP Inspector](https://inspector.modelcontextprotocol.io/) - Web-based testing tool
 - Claude Desktop with MCP configuration
+
+```json
+{
+  "mcpServers": {
+    "matsjfunke": {
+      "url": "https://mcp.matsjfunke.com/mcp", // or http://localhost:3000/api/mcp
+      "headers": {
+        "X-API-Key": "password"
+      }
+    }
+  }
+}
+```
+
 - Any MCP-compatible AI client
+
+**Security Configuration:**
+
+For production deployments, set the API key via environment variable:
+
+```bash
+# Set in your deployment environment
+export MCP_API_KEY="your-secure-api-key-here"
+```
+
+The server will use `MCP_API_KEY` environment variable if set, otherwise defaults to `"password"`.
 
 ### Implementation
 
