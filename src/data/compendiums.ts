@@ -2,6 +2,13 @@ import { CompendiumMeta } from "@/types/compendium";
 
 export const compendiums: CompendiumMeta[] = [
   {
+    "title": "Model Context Protocol (MCP)",
+    "description": "Enabling the next master of a craft by providing access to the tools of the trade",
+    "date": "2025-07-27",
+    "author": "matsjfunke",
+    "slug": "mcp"
+  },
+  {
     "title": "SCIM 2.0 open standard",
     "description": "The Protocol for automated user provisioning across apps, its specifications and implementation considerations at a glance.",
     "date": "2025-06-28",

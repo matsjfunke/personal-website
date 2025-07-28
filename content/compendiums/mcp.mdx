@@ -1,0 +1,172 @@
+---
+title: "Model Context Protocol (MCP)"
+description: "Enabling the next master of a craft by providing access to the tools of the trade"
+author: "matsjfunke"
+date: "2025-07-27"
+---
+
+## What is MCP?
+
+Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to
+connect your devices to various peripherals and accessories, MCP provides a standardized way to
+connect AI models to different data sources and tools.
+
+## Why should you care?
+
+1. The MCP specification was originally proposed by Anthropic but OpenAI and Google have also adopted it.
+   Making it the industry standard for for Model Prodivers.
+
+2. Big Techs like Attlassian, Cloudflare, Github, and others are adopting MCP and exposing their APIs as MCP servers.
+
+3. More and more companies want to prevent vendor lock-in and reduce complexity in building and maintaining non-standard integrations
+
+## How does it work? (A technical deep dive)
+
+To those familiar with HTTP and APIs, MCP is a simple HTTP request and response protocol. But instead of using JSON
+over HTTP, MCP uses JSON-RPC.
+
+### The MCP server
+
+The server exposes **tools** (think post requests), **resources** (think get requests) and **prompts** (templates of how to interact with the server).
+
+#### 1. Data Layer: JSON-RPC (Remote Procedure Call)
+
+JSON-RPC provides consistent message structure and three message types:
+
+- **Requests** with IDs that expect responses
+- **Responses** that match request IDs
+- **Notifications** for one-way communication without responses
+
+> As the name Remote Procedure Call suggests, it enables to ask another computer to run a function (procedure) and get the result, as if you were running it locally.
+
+To an LLM engineers familiar with tool calling, the structure of a JSON-RPC message may be familiar.
+Tools are essentially functions that the LLM can "call" remotely, using a JSON-RPC-like protocol to specify the function name, parameters.
+
+Example web search tool call:
+
+```json
+{
+  "tool": "web_search",
+  "parameters": {
+    "query": "latest AI developments"
+  }
+}
+```
+
+#### 2. MCP protocol methods (most methods are optional):
+
+| Method                   | Purpose                         | Returns                                |
+| ------------------------ | ------------------------------- | -------------------------------------- |
+| ping                     | Check if server is responsive   | Empty result object                    |
+| initialize               | Get server capabilities         | Server capabilities and info           |
+| tools/list               | Discover available tools        | Array of tool definitions with schemas |
+| tools/call               | Execute a specific tool         | Tool execution result                  |
+| resources/list           | List available direct resources | Array of resource descriptors          |
+| resources/read           | Retrieve resource contents      | Resource data with metadata            |
+| resources/templates/list | Discover resource templates     | Array of resource template definitions |
+| resources/subscribe      | Monitor resource changes        | Subscription confirmation              |
+
+here is a simple Python fastapi example in JSON-RPC format:
+
+```python
+# mcp.py
+import uvicorn
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.post("/mcp")
+async def json_rpc(request: Request):
+    body = await request.json()
+    method = body.get("method")
+    params = body.get("params")
+    id_ = body.get("id")
+
+    if method == "tools/list":
+        return {
+            "jsonrpc": "2.0",
+            "result": {
+                "tools": [
+                    {
+                        "name": "add_numbers",
+                        "description": "Adds two numbers",
+                        "inputSchema": {"type": "object", "properties": {"a": {"type": "number"}, "b": {"type": "number"}}, "required": ["a", "b"]},
+                    }
+                ]
+            },
+            "id": id_,
+        }
+
+    if method == "tools/call":
+        a = params["arguments"]["a"]
+        b = params["arguments"]["b"]
+        return {"jsonrpc": "2.0", "result": {"sum": a + b}, "id": id_}
+
+    return {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}, "id": id_}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+    # pip install fastapi uvicorn
+    # python mcp.py
+```
+
+You can test this server from your terminal using `curl`.
+
+To list the available tools:
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc": "2.0",
+  "method": "tools/list",
+  "id": 1
+}'
+```
+
+To call the `add_numbers` tool:
+
+```bash
+curl -X POST http://localhost:8080/mcp \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "arguments": { "a": 5, "b": 3 }
+  },
+  "id": 2
+}'
+```
+
+#### 3. Transport Layer
+
+Now that we know what format / purpose the data has we we need to transfer it.
+The MCP protocol supports multiple transport layers:
+
+Local Servers:
+
+- **Stdio transport** (standard input and output) used for locally running MCP servers, most server use this transport layer but its not a scalable or long term solution for corporations.
+
+Remote Servers:
+
+- **Streamable HTTP** uses HTTP POST & GET requests for client-to-server messages with optional Server-Sent Events for streaming capabilities, can be identified by `/mcp` endpoint.
+- **SSE** (Server-Sent Events) this is a legacy transport layer servers using it will have a `/sse` endpoint.
+
+#### 4. Authentication
+
+Remote servers can handle multiple client connections, to identify users authentication can be implemented
+bearer tokens, API keys, and custom headers. MCP recommends using OAuth to obtain authentication tokens.
+
+To start tinkering I recommend using simple API keys passed as headers.
+
+But for production the MCP specification suggests that clients and servers **should support** the OAuth 2.0 **Dynamic Client Registration (DCR)** Protocol RFC7591 to
+allow MCP clients to obtain OAuth client IDs without user interaction [spec](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization#dynamic-client-registration)
+Which lets clients register with an OAuth 2.0 server automatically and get their own credentials, making it easier and more scalable to onboard new clients.
+
+After DCR the authentication token is obtained through the OAuth 2.0 **Authorization Code** flow more on this in my [OAuth Compendium](https://matsjfunke.com/compendiums/oauth2).
+
+#### Building an MCP server
+
+To build an MCP server you won't have to write JSON-RPC methods, you can use one of the many SDKs for [TypeScript, Python, Rust, Go, Java, C#, Kotlin, Ruby, Swift and C#](https://modelcontextprotocol.io/docs/sdk#sdks)
+theres even one for [NextJS](https://github.com/vercel/mcp-adapter) by Vercel.
