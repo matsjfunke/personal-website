@@ -170,3 +170,33 @@ After DCR the authentication token is obtained through the OAuth 2.0 **Authoriza
 
 To build an MCP server you won't have to write JSON-RPC methods, you can use one of the many SDKs for [TypeScript, Python, Rust, Go, Java, C#, Kotlin, Ruby, Swift and C#](https://modelcontextprotocol.io/docs/sdk#sdks)
 theres even one for [NextJS](https://github.com/vercel/mcp-adapter) by Vercel.
+
+To test / debug your MCP server you can use the [MCP Inspector](https://modelcontextprotocol.io/legacy/tools/inspector#inspector)
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+When it comes to choosing your tech stack it differ much from traditional API development.
+Choose an SDK in a language you are familiar with, determine if and to what extent authentification is needed.
+Depending on your needs deploy to a cloud provider or self-host, implement load balancing and monitoring if need be.
+
+**My must have methods: initialize, ping, tools/list, tools/call (since most clients only support tools)**
+Optional methods: resources/list, resources/read only look into other methods if your provider supports them.
+
+Security considerations are similar to traditional web development and outlined int the [specification security best practices](https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices).
+Although I like to urge to consider **Prompt Injections** as they are the biggest attack vector.
+
+Preventing prompt injections, there is not set playbook yet but generally consider what information is being exposed and
+what kind of actions the model can take.
+If you are using a Host application that doesnt support tool call confirmation be vary of direct calls mitigatating user control.
+Currently the best way to prevent hostile tool inputs from messing with your data is using an other LLM as a judge ([evaluation paper](https://arxiv.org/abs/2411.15594))
+to determine if the tool call is malicious or not.
+
+### Supplying Server Data to a Model
+
+MCP clients are instantiated by host applications to communicate with particular MCP servers. The host application, like Langdock, Cursor, Claude or ChatGPT.
+
+Host -> has many Clients
+
+Clients -> have 1on1 connection with Servers
