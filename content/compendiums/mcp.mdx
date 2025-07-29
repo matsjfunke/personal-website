@@ -5,9 +5,11 @@ author: "matsjfunke"
 date: "2025-07-27"
 ---
 
+> in the following I will dive into the inner workkings of the MCP protocol from the underlying technologies to the abstracting SDKs and frameworks.
+
 ## What is MCP?
 
-Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to
+Think of `MCP like a USB-C port for AI applications`. Just as USB-C provides a standardized way to
 connect your devices to various peripherals and accessories, MCP provides a standardized way to
 connect AI models to different data sources and tools.
 
@@ -98,9 +100,14 @@ async def json_rpc(request: Request):
         }
 
     if method == "tools/call":
-        a = params["arguments"]["a"]
-        b = params["arguments"]["b"]
-        return {"jsonrpc": "2.0", "result": {"sum": a + b}, "id": id_}
+        tool_name = params.get("name")
+
+        if tool_name == "add_numbers":
+            a = params["arguments"]["a"]
+            b = params["arguments"]["b"]
+            return {"jsonrpc": "2.0", "result": {"sum": a + b}, "id": id_}
+
+        return {"jsonrpc": "2.0", "error": {"code": -32601, "message": f"Unknown tool: {tool_name}"}, "id": id_}
 
     return {"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}, "id": id_}
 
@@ -133,6 +140,7 @@ curl -X POST http://localhost:8080/mcp \
   "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
+    "name": "add_numbers",
     "arguments": { "a": 5, "b": 3 }
   },
   "id": 2
@@ -171,12 +179,6 @@ After DCR the authentication token is obtained through the OAuth 2.0 **Authoriza
 To build an MCP server you won't have to write JSON-RPC methods, you can use one of the many SDKs for [TypeScript, Python, Rust, Go, Java, C#, Kotlin, Ruby, Swift and C#](https://modelcontextprotocol.io/docs/sdk#sdks)
 theres even one for [NextJS](https://github.com/vercel/mcp-adapter) by Vercel.
 
-To test / debug your MCP server you can use the [MCP Inspector](https://modelcontextprotocol.io/legacy/tools/inspector#inspector)
-
-```bash
-npx @modelcontextprotocol/inspector
-```
-
 When it comes to choosing your tech stack it differ much from traditional API development.
 Choose an SDK in a language you are familiar with, determine if and to what extent authentification is needed.
 Depending on your needs deploy to a cloud provider or self-host, implement load balancing and monitoring if need be.
@@ -193,10 +195,132 @@ If you are using a Host application that doesnt support tool call confirmation b
 Currently the best way to prevent hostile tool inputs from messing with your data is using an other LLM as a judge ([evaluation paper](https://arxiv.org/abs/2411.15594))
 to determine if the tool call is malicious or not.
 
-### Supplying Server Data to a Model
+here is a simple express server:
 
-MCP clients are instantiated by host applications to communicate with particular MCP servers. The host application, like Langdock, Cursor, Claude or ChatGPT.
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from "express";
+import { randomUUID } from "node:crypto";
+import { z } from "zod";
+
+const app = express();
+app.use(express.json());
+
+const server = new McpServer({ name: "example-server", version: "2025-06-18" });
+
+server.registerTool(
+  "add_numbers",
+  {
+    description: "Adds two numbers",
+    inputSchema: { a: z.number(), b: z.number() },
+  },
+  async ({ a, b }: { a: number; b: number }) => {
+    return { content: [{ type: "text", text: `Result: ${a + b}` }] };
+  }
+);
+
+app.post("/mcp", async (req, res) => {
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+  });
+  await server.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+});
+
+app.listen(8080, () => console.log("MCP server running on port 8080"));
+```
+
+To test / debug your MCP server you can use the [MCP Inspector](https://modelcontextprotocol.io/legacy/tools/inspector#inspector)
+
+```bash
+pnpx @modelcontextprotocol/inspector
+```
+
+### Supplying MCP Server Data to a Model
+
+MCP clients communicate with MCP servers and are instantiated by host applications like Langdock, Cursor, Claude or ChatGPT.
 
 Host -> has many Clients
 
 Clients -> have 1on1 connection with Servers
+
+Host applications need to be able to discover MCP Servers through their URLs, usually containing the subdomain `mcp.` and a mcp endpoint usually `/mcp` (for legacy servers `/sse`).
+
+#### Building a MCP host
+
+**1. Discover MCP Server**
+
+This will be inciated by the user entering the URL of the MCP server in the host application.
+
+- `ping` the server to see if it is responsive
+
+** 2. Determine Transport Layer**
+
+This can be done by parsing the URL and checking for the `/mcp` or `/sse` endpoint.
+
+**3. Authentication**
+
+Try to `initialize` the server to get the server capabilities and info, and `list` the tools available.
+If this fails you now that authentication is needed.
+
+Let the user determine what type either OAuth 2.0 or API key.
+
+If API key, let the user enter the API key and send it in the request headers.
+
+For OAuth 2.0, you'll need to:
+
+- discover the Authorization URL and Token URL, this can be done through trying to call different `/.well-known/...` endpoints.
+- once your have the URLs you can start the dynamic client registration flow, meaning you can register a client with the server and get a client ID and client secret.
+- than with the cleint id you can redirect the user through the OAuth flow where they can login and get an access token.
+- this Auth access token will be used to authenticate the user when calling the server.
+
+**4. Create a Connection**
+
+Now a connection can be established find some pseudo code from the TypeScript SDK creating a streamable HTTP transport connection below.
+
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+
+if (authenticationType === "oauth") {
+  transport = new StreamableHTTPClientTransport(new URL(config.url), {
+    authProvider: oauthProvider,
+  });
+} else if (authenticationType === "apiKey") {
+  transport = new StreamableHTTPClientTransport(new URL(config.url), {
+    requestInit: { headers },
+  });
+} else {
+  transport = new StreamableHTTPClientTransport(new URL(config.url));
+}
+
+const client = new Client({ name: "client-name", version: "2025-06-18" });
+
+await client.connect(transport);
+```
+
+**5. Negotiate MCP protocol version**
+
+Next the client and server need to agree on the MCP protocol version.
+
+```typescript
+const version = await client.getServerVersion();
+```
+
+**6. Calling Tools**
+
+Now the client can start calling tools on the server.
+
+```typescript
+const toolCallResult = await client.callTool({
+  name: "add_numbers",
+  arguments: { a: 1, b: 2 },
+});
+
+client.close(); // close the connection
+```
+
+MCP tool calling can also be facilitated by LLM-frameworks like the [Vercel SDK](https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling#mcp-tools) which can be useful for unifying tool calling across different LLMs.
+
+> If you have any further questions, feedback or just want to chat about MCP please don't hesitate to reach out!
