@@ -1,9 +1,12 @@
 import React from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { Mail } from "lucide-react";
+
+import GithubIcon from "./icons/GithubIcon";
+import LinkedInIcon from "./icons/LinkedInIcon";
+import XIcon from "./icons/XIcon";
 
 export default function Footer() {
   return (
@@ -15,13 +18,7 @@ export default function Footer() {
             className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
-            <Image
-              src="/footer/github.svg"
-              alt="GitHub"
-              width={20}
-              height={20}
-              className="filter invert"
-            />
+            <GithubIcon />
             <span className="hidden sm:inline">Github</span>
           </Link>
           <Link
@@ -29,13 +26,7 @@ export default function Footer() {
             className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
-            <Image
-              src="/footer/linkedin.svg"
-              alt="LinkedIn"
-              width={20}
-              height={20}
-              className="filter invert"
-            />
+            <LinkedInIcon />
             <span className="hidden sm:inline">LinkedIn</span>
           </Link>
           <Link
@@ -43,13 +34,7 @@ export default function Footer() {
             className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors text-xl"
             target="_blank"
           >
-            <Image
-              src="/footer/x.svg"
-              alt="Twitter"
-              width={20}
-              height={20}
-              className="filter invert"
-            />
+            <XIcon />
             <span className="hidden sm:inline">Twitter</span>
           </Link>
           <Link
