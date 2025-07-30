@@ -1,6 +1,8 @@
+import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 
 import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
@@ -9,14 +11,15 @@ import { join } from "path";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { Article, WithContext } from "schema-dts";
 
 import CodeBlock from "@/components/CodeBlock";
 import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
 interface Props {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
+  };
 }
 
 async function getCompendium(slug: string): Promise<CompendiumDetail | null> {
@@ -41,6 +44,42 @@ async function getCompendium(slug: string): Promise<CompendiumDetail | null> {
   }
 }
 
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata | undefined> {
+  const compendium = await getCompendium(params.slug);
+
+  if (!compendium) {
+    return;
+  }
+
+  const { frontmatter, title } = compendium;
+  const { description, date, author } = frontmatter;
+
+  const metadata: Metadata = {
+    title,
+    description,
+    alternates: {
+      canonical: `/compendiums/${compendium.slug}`,
+    },
+    openGraph: {
+      title: title,
+      description: description,
+      type: "article",
+      publishedTime: date,
+      authors: author,
+      url: `https://matsjfunke.com/compendiums/${compendium.slug}`,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+
+  return metadata;
+}
+
 export async function generateStaticParams() {
   try {
     const compendiumsPath = join(process.cwd(), "content/compendiums");
@@ -58,15 +97,37 @@ export async function generateStaticParams() {
 }
 
 export default async function CompendiumPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug } = params;
   const compendium = await getCompendium(slug);
 
   if (!compendium) {
     notFound();
   }
 
+  const jsonLd: WithContext<Article> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: compendium.title,
+    description: compendium.frontmatter.description,
+    datePublished: compendium.frontmatter.date
+      ? new Date(compendium.frontmatter.date).toISOString()
+      : undefined,
+    author: compendium.frontmatter.author
+      ? [{ "@type": "Person", name: compendium.frontmatter.author }]
+      : [],
+    publisher: {
+      "@type": "Person",
+      name: "Mats J Funke",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pt-24 pb-16">
+      <Script
+        id="json-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <Link
           href="/compendiums"

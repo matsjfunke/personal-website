@@ -1,6 +1,8 @@
+import { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 
 import { readFile, readdir } from "fs/promises";
 import matter from "gray-matter";
@@ -9,14 +11,15 @@ import { join } from "path";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { Article, WithContext } from "schema-dts";
 
 import CodeBlock from "@/components/CodeBlock";
 import { ThoughtDetail, ThoughtMeta } from "@/types/thought";
 
 interface Props {
-  params: Promise<{
+  params: {
     slug: string;
-  }>;
+  };
 }
 
 async function getThought(slug: string): Promise<ThoughtDetail | null> {
@@ -41,6 +44,42 @@ async function getThought(slug: string): Promise<ThoughtDetail | null> {
   }
 }
 
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata | undefined> {
+  const thought = await getThought(params.slug);
+
+  if (!thought) {
+    return;
+  }
+
+  const { frontmatter, title } = thought;
+  const { abstract, date, author } = frontmatter;
+
+  const metadata: Metadata = {
+    title,
+    description: abstract,
+    alternates: {
+      canonical: `/thoughts/${thought.slug}`,
+    },
+    openGraph: {
+      title: title,
+      description: abstract,
+      type: "article",
+      publishedTime: date,
+      authors: author,
+      url: `https://matsjfunke.com/thoughts/${thought.slug}`,
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description: abstract,
+    },
+  };
+
+  return metadata;
+}
+
 export async function generateStaticParams() {
   try {
     const thoughtsPath = join(process.cwd(), "content/thoughts");
@@ -58,15 +97,37 @@ export async function generateStaticParams() {
 }
 
 export default async function ThoughtPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug } = params;
   const thought = await getThought(slug);
 
   if (!thought) {
     notFound();
   }
 
+  const jsonLd: WithContext<Article> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: thought.title,
+    description: thought.frontmatter.abstract,
+    datePublished: thought.frontmatter.date
+      ? new Date(thought.frontmatter.date).toISOString()
+      : undefined,
+    author: thought.frontmatter.author
+      ? [{ "@type": "Person", name: thought.frontmatter.author }]
+      : [],
+    publisher: {
+      "@type": "Person",
+      name: "Mats J Funke",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pt-24 pb-16">
+      <Script
+        id="json-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         <Link
           href="/thoughts"
