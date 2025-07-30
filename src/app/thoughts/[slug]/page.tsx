@@ -17,9 +17,9 @@ import CodeBlock from "@/components/CodeBlock";
 import { ThoughtDetail, ThoughtMeta } from "@/types/thought";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 async function getThought(slug: string): Promise<ThoughtDetail | null> {
@@ -47,7 +47,8 @@ async function getThought(slug: string): Promise<ThoughtDetail | null> {
 export async function generateMetadata({
   params,
 }: Props): Promise<Metadata | undefined> {
-  const thought = await getThought(params.slug);
+  const { slug } = await params;
+  const thought = await getThought(slug);
 
   if (!thought) {
     return;
@@ -97,7 +98,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ThoughtPage({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const thought = await getThought(slug);
 
   if (!thought) {

@@ -17,9 +17,9 @@ import CodeBlock from "@/components/CodeBlock";
 import { CompendiumDetail, CompendiumMeta } from "@/types/compendium";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 async function getCompendium(slug: string): Promise<CompendiumDetail | null> {
@@ -47,7 +47,8 @@ async function getCompendium(slug: string): Promise<CompendiumDetail | null> {
 export async function generateMetadata({
   params,
 }: Props): Promise<Metadata | undefined> {
-  const compendium = await getCompendium(params.slug);
+  const { slug } = await params;
+  const compendium = await getCompendium(slug);
 
   if (!compendium) {
     return;
@@ -97,7 +98,7 @@ export async function generateStaticParams() {
 }
 
 export default async function CompendiumPage({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const compendium = await getCompendium(slug);
 
   if (!compendium) {
