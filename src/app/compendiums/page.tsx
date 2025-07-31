@@ -48,7 +48,7 @@ async function getCompendiums(): Promise<CompendiumMeta[]> {
 export const metadata: Metadata = {
   title: "Compendiums - Technical Guides & References",
   description:
-    "Technical guides, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
+    "Technical guides, notes, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
   keywords: [
     "technical guides",
     "software development",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Compendiums - Technical Guides & References",
     description:
-      "Technical guides, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
+      "Technical guides, notes, references and tutorials covering topics from protocols & specifications to machine learning architectures.",
     url: "https://matsjfunke.com/compendiums",
   },
 };
@@ -76,7 +76,8 @@ export default async function CompendiumsPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Compendiums</h1>
           <p className="text-xl text-white/80">
-            A collection of my intuitions, concise guides & references
+            A collection of my intuitions, concise guides, notes & references on
+            various engineering topics.
           </p>
         </div>
 
