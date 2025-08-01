@@ -161,7 +161,7 @@ Think of it as a sorted list of values with pointers to the actual rows.
 #### When to Create Indexes:
 
 ```sql
--- Primary & Foreign Keys are automatically indexed in most databases, you don't need to create indexes for them.
+-- Primary keys and unique constraints are indexed automatically
 CREATE TABLE users (
     user_id UUID PRIMARY KEY,  -- Indexed automatically
     email VARCHAR(255) UNIQUE  -- Indexed automatically
@@ -171,19 +171,19 @@ CREATE TABLE users (
 -- Index columns you search by often
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_orders_status ON orders(status);
--- Only index active users
+
+-- Partial index: only index active users
 CREATE INDEX idx_active_users_email ON users(email) WHERE is_active = TRUE;
 
--- Columns used in JOINs are foreign keys and columns used to link tables
--- Already indexed as foreign key, but explicit for clarity
+-- Columns used in JOINs (foreign keys) are NOT automatically indexed in PostgreSQL
+-- Add an index to improve JOIN performance
 CREATE INDEX idx_orders_user_id ON orders(user_id);
 
 -- Columns used for sorting are ORDER BY and GROUP BY columns
 -- Index for efficient sorting
 CREATE INDEX idx_orders_date ON orders(order_date DESC);
 
--- Composite indexes are multiple columns frequently used together
--- Optimize queries that filter by both user and date
+-- Composite index for queries that filter by both user and date
 CREATE INDEX idx_orders_user_date ON orders(user_id, order_date);
 ```
 
