@@ -18,10 +18,9 @@ export default function Home() {
 
         <section className="py-12 max-w-4xl mx-auto">
           <p className="text-xl text-gray-300 mb-8 text-center leading-relaxed">
-            Happy you found my personal website! I&apos;m a software engineer,
-            passionate about learning and AI. I write about technology, life and
-            on this website I share my learnings through compendiums and
-            thoughts.
+            Hey, glad you found my personal website! I&apos;m a software
+            engineer passionate about learning and AI. On this website, I want
+            to share my learings and write about technology and life.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 mt-12">
@@ -45,9 +44,10 @@ export default function Home() {
                   </div>
                 </TooltipContent>
               </Tooltip>
-              <p className="text-gray-400">
-                Technical guides, references and tutorials covering topics from
-                protocols & specifications to machine learning architectures.
+              <p className="text-gray-400 text-justify">
+                Technical guides, notes, references, and tutorials covering
+                topics ranging from protocols and specifications to general
+                software engineering knowledge and machine learning.
               </p>
             </div>
             <div className="text-center">
@@ -70,7 +70,7 @@ export default function Home() {
                   </div>
                 </TooltipContent>
               </Tooltip>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-justify">
                 Personal reflections on life and technological development, AI
                 trends, and the intersection of technology and human experience.
               </p>
@@ -95,7 +95,7 @@ export default function Home() {
                   </div>
                 </TooltipContent>
               </Tooltip>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-justify">
                 A curated collection of books that I have deeply enjoyed and
                 that have significantly shaped my perspectives and thinking over
                 time.

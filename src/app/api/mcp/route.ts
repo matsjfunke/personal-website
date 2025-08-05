@@ -40,27 +40,6 @@ async function getThoughtContent(slug: string): Promise<string | null> {
 // Handle POST requests - simple JSON-RPC handling
 export async function POST(req: NextRequest) {
   try {
-    // Check for API key authentication
-    const apiKey =
-      req.headers.get("X-API-Key") ||
-      req.headers.get("Authorization")?.replace("Bearer ", "");
-
-    const expectedApiKey = process.env.MCP_API_KEY || "password";
-
-    if (!apiKey || apiKey !== expectedApiKey) {
-      return NextResponse.json(
-        {
-          jsonrpc: "2.0",
-          error: {
-            code: -32001,
-            message: "Unauthorized: Invalid or missing API key",
-          },
-          id: null,
-        },
-        { status: 401 }
-      );
-    }
-
     const body = await req.json();
 
     // Handle ping request

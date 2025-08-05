@@ -39,123 +39,6 @@ Once the development server is running, you can access the application at:
 - **Website**: Open [http://localhost:3000](http://localhost:3000) to view the site
 - **MCP Server**: Available at [http://localhost:3000/api/mcp](http://localhost:3000/api/mcp) for AI clients
 
-## MCP Server
-
-This website includes a **Model Context Protocol (MCP)** server that provides structured access to content for AI clients. The server uses JSON-RPC over HTTP and implements the MCP specification with API key authentication.
-
-#### Available Resources
-
-- `compendiums://all` - Returns all technical compendiums with metadata
-- `thoughts://all` - Returns all thoughts and blog posts with metadata
-- `books://all` - Returns all book recommendations with metadata
-
-#### Available Tools
-
-- `search_content(query)` - Search across all content types and return full MDX content
-
-#### Authentication
-
-The MCP server requires API key authentication for all requests. Include the API key in the `X-API-Key` header or as a `Bearer` token in the `Authorization` header.
-
-**Default API Key:** `password` (⚠️ **Change this in production!**)
-
-### Usage
-
-**Test with curl:**
-
-```bash
-# Initialize MCP connection
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: password" \
-  -d '{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}, "id": 1}'
-
-# List available resources
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: password" \
-  -d '{"jsonrpc": "2.0", "method": "resources/list", "params": {}, "id": 2}'
-
-# Read all compendiums metadata
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: password" \
-  -d '{"jsonrpc": "2.0", "method": "resources/read", "params": {"uri": "compendiums://all"}, "id": 3}'
-
-# List available tools
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: password" \
-  -d '{"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 4}'
-
-# Search for content (returns full MDX)
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: password" \
-  -d '{"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "search_content", "arguments": {"query": "rust"}}, "id": 5}'
-
-# Alternative: Using Authorization header
-curl -X POST http://localhost:3002/api/mcp \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer password" \
-  -d '{"jsonrpc": "2.0", "method": "ping", "id": 1}'
-```
-
-**Connect with MCP clients:**
-
-- [MCP Inspector](https://inspector.modelcontextprotocol.io/) - Web-based testing tool
-- Claude Desktop with MCP configuration
-
-```json
-{
-  "mcpServers": {
-    "matsjfunke": {
-      "url": "https://mcp.matsjfunke.com/mcp", // or http://localhost:3000/api/mcp
-      "headers": {
-        "X-API-Key": "password"
-      }
-    }
-  }
-}
-```
-
-- Any MCP-compatible AI client
-
-**Security Configuration:**
-
-For production deployments, set the API key via environment variable:
-
-```bash
-# Set in your deployment environment
-export MCP_API_KEY="your-secure-api-key-here"
-```
-
-The server will use `MCP_API_KEY` environment variable if set, otherwise defaults to `"password"`.
-
-### Implementation
-
-The MCP server is implemented as a Next.js API route (`/src/app/api/mcp/route.ts`) using manual JSON-RPC handling for simplicity and reliability. This approach provides:
-
-- ✅ **Framework compatibility** - Works perfectly with Next.js
-- ✅ **Stateless operation** - Fits serverless deployment models
-- ✅ **Simple debugging** - Clear, readable JSON-RPC implementation
-- ✅ **High performance** - Direct HTTP handling without abstraction layers
-
-### Architecture
-
-**Resources** (3 collection resources):
-
-- Browse content metadata for discovery
-- `compendiums://all`, `thoughts://all`, `books://all`
-
-**Tools** (1 search tool):
-
-- `search_content(query)` - Returns full MDX content from matching items
-- Searches across all content types (compendiums, thoughts, books, pages)
-- Provides complete content, not just metadata
-
-This hybrid approach gives AI clients the best of both worlds: efficient browsing AND full content access through search.
-
 ## Development Guidelines
 
 ### Where to Put Files
@@ -255,6 +138,69 @@ Compendiums use [MDX Remote](https://github.com/hashicorp/next-mdx-remote) with 
 - GitHub Flavored Markdown (tables, strikethrough, etc.)
 - Custom styling
 - Code syntax highlighting
+
+## MCP Server
+
+This website includes a **Model Context Protocol (MCP)** server that provides structured access to content for AI clients. The server uses JSON-RPC over HTTP and implements the MCP specification with API key authentication.
+
+> The MCP server is implemented from scratch using manual JSON-RPC handling within a Next.js API route (`/src/app/api/mcp/route.ts`).
+
+#### Available Resources
+
+- `compendiums://all` - Returns all technical compendiums with metadata
+- `thoughts://all` - Returns all thoughts and blog posts with metadata
+- `books://all` - Returns all book recommendations with metadata
+
+#### Available Tools
+
+- `search_content(query)` - Search across all content types and return full MDX content
+
+### Usage
+
+**Test with curl:**
+
+```bash
+# Initialize MCP connection
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}, "id": 1}'
+
+# List available resources
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "resources/list", "params": {}, "id": 2}'
+
+# Read all compendiums metadata
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "resources/read", "params": {"uri": "compendiums://all"}, "id": 3}'
+
+# List available tools
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "tools/list", "params": {}, "id": 4}'
+
+# Search for content (returns full MDX)
+curl -X POST http://localhost:3002/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "search_content", "arguments": {"query": "rust"}}, "id": 5}'
+```
+
+**Connect with MCP clients:**
+
+- [Langdock](https://app.langdock.com/integrations)
+- [MCP Inspector](https://inspector.modelcontextprotocol.io/) - Web-based testing tool
+- Claude Desktop with MCP configuration
+
+```json
+{
+  "mcpServers": {
+    "matsjfunke": {
+      "url": "https://mcp.matsjfunke.com/mcp" // or http://localhost:3000/api/mcp
+    }
+  }
+}
+```
 
 ## Deployment
 
